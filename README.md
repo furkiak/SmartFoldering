@@ -30,13 +30,10 @@
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="" width="600" title="ActiveRest Dashboard">
+  <img src="https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SSF.png" width="600" title="ActiveRest Dashboard">
 </p>
  
-
-| Main Dashboard | Rule Configuration |
-| :---: | :---: |
-| ![Main](https://via.placeholder.com/400x300.png?text=Main+Window+Screenshot) | ![Rules](https://via.placeholder.com/400x300.png?text=Rules+Window+Screenshot) |
+ 
 
 ## 🛠️ Tech Stack & Architecture
 
