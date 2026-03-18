@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SmartFoldering.SettingsWindow"
+        Width="350" SizeToContent="Height"
+        Background="#18181A"
+        SystemDecorations="None"
+        WindowStartupLocation="CenterScreen">
+
+    <Border Padding="25" PointerPressed="Window_PointerPressed" CornerRadius="12" BorderBrush="#2C2C2E" BorderThickness="1">
+        <StackPanel Spacing="20">
+            <TextBlock Text="Settings" FontSize="18" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,5"/>
+
+            <StackPanel Spacing="10" Margin="0,10,0,15">
+                <CheckBox x:Name="StartupCheckBox" 
+                          Content="Run at Windows Startup" 
+                          Foreground="#F2F2F7" 
+                          FontWeight="SemiBold"
+                          FontSize="14"/>
+                <TextBlock Text="Automatically starts tracking your folders in the background when your computer turns on." 
+                           Foreground="#8E8E93" FontSize="12" TextWrapping="Wrap" Margin="25,0,0,0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                <Button Content="Cancel" Width="90" Padding="10" Background="Transparent" Foreground="#8E8E93" Click="Cancel_Click" HorizontalContentAlignment="Center"/>
+                <Button Content="Save" Width="90" Padding="10" Background="#48484A" Foreground="#FFFFFF" FontWeight="Bold" CornerRadius="6" Click="Save_Click" HorizontalContentAlignment="Center"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

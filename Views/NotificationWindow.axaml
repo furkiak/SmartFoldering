@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SmartFoldering.NotificationWindow"
+        Width="340" SizeToContent="Height"
+        SystemDecorations="None"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Background="Transparent"
+        WindowStartupLocation="Manual">
+
+    <Border Background="#1C1C1E" BorderBrush="#3A3A3C" BorderThickness="1" CornerRadius="12" Margin="10">
+        <Border.BoxShadow>
+            <BoxShadows>0 4 15 0 #80000000</BoxShadows>
+        </Border.BoxShadow>
+        <Grid ColumnDefinitions="Auto, *" Margin="20">
+            <PathIcon Data="{StaticResource CheckmarkRegular}" Foreground="#A1A1A6" Width="26" Height="26" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0,0,0">
+                <TextBlock x:Name="TitleBlock" Text="SmartFoldering Active" FontWeight="Bold" Foreground="#FFFFFF" FontSize="15"/>
+                <TextBlock x:Name="MessageBlock" Text="System started monitoring in the background." Foreground="#8E8E93" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

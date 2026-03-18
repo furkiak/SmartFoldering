@@ -1,0 +1,118 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartFoldering.ViewModels"
+        x:Class="SmartFoldering.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="SmartFoldering"
+        Width="450" Height="550" 
+        Background="#18181A" 
+        SystemDecorations="None" 
+        WindowStartupLocation="Manual"
+        CanResize="False"> 
+    
+    <Window.Styles>
+        <Style Selector="Button.ActionBtn">
+            <Setter Property="Background" Value="#2C2C2E"/>
+            <Setter Property="Foreground" Value="#D1D1D6"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.ActionBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#3A3A3C"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+        
+        <Style Selector="Button.DestBtn">
+            <Setter Property="Background" Value="#48484A"/> 
+            <Setter Property="Foreground" Value="#F2F2F7"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="Button.DestBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#636366"/>
+        </Style>
+
+        <Style Selector="Button.IconBtn">
+            <Setter Property="Background" Value="#2C2C2E"/>
+            <Setter Property="Foreground" Value="#E5E5EA"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="CornerRadius" Value="18"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.IconBtn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#3A3A3C"/>
+        </Style>
+
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="25" PointerPressed="Window_PointerPressed">
+        
+
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto" Margin="0,0,0,25">
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Source Folders" FontWeight="Bold" FontSize="26" Foreground="#FFFFFF"/>
+                <TextBlock Text="Directories to monitor automatically." Foreground="#8E8E93" FontSize="13" Margin="0,4,0,0"/>
+            </StackPanel>
+            
+            <Button Grid.Column="1" Content="⚙" Classes="IconBtn" Command="{Binding OpenSettingsCommand}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button Grid.Column="2" Content="+" Classes="IconBtn" Command="{Binding AddWatchFolderCommand}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button Grid.Column="3" Content="✕" Classes="IconBtn" Click="HideWindow_Click" VerticalAlignment="Center"/>
+        </Grid>
+
+ 
+        <ListBox Grid.Row="1" ItemsSource="{Binding WatchFolders}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1" CornerRadius="12" Padding="18" Margin="0,0,0,12">
+                        <Grid RowDefinitions="Auto, Auto">
+                            <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Foreground="#F2F2F7"/>
+                                <TextBlock Text="{Binding Path}" Foreground="#8E8E93" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+            <Button Content="Delete" Classes="ActionBtn" 
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteWatchFolderCommand}" 
+                    CommandParameter="{Binding}"/>
+            <Button Content="Edit" Classes="ActionBtn" 
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).EditWatchFolderCommand}" 
+                    CommandParameter="{Binding}"/>
+            <Button Content="Destinations" Classes="DestBtn" 
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenDestinationsCommand}" 
+                    CommandParameter="{Binding}"/>
+        </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15" Margin="0,20,0,0">
+            <Button Content="Force Scan" Classes="ActionBtn" Command="{Binding ForceScanCommand}" Width="110" HorizontalContentAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>

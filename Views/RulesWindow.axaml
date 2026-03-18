@@ -1,0 +1,60 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:SmartFoldering"
+        xmlns:models="using:SmartFoldering.Models"
+        x:Class="SmartFoldering.RulesWindow"
+        x:DataType="local:RulesWindow"
+        Title="Filters"
+        Width="450" Height="550" 
+        Background="#18181A" 
+        SystemDecorations="None" 
+        WindowStartupLocation="Manual"
+        CanResize="False"> 
+    
+    <Window.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="25" PointerPressed="Window_PointerPressed">
+        
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="0,0,0,25">
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Filters" FontWeight="Bold" FontSize="22" Foreground="#FFFFFF"/>
+                <TextBlock Text="{Binding TargetName}" Foreground="#8E8E93" FontSize="13" Margin="0,2,0,0"/>
+            </StackPanel>
+            
+            <Button Grid.Column="1" Content="+" Classes="IconBtn" Click="AddRule_Click" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button Grid.Column="2" Content="✕" Classes="IconBtn" Click="Back_Click" VerticalAlignment="Center"/>
+        </Grid>
+
+ <ListBox Grid.Row="1" ItemsSource="{Binding ObservableRules}" Background="Transparent">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:Rule">
+                    <Border Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1" CornerRadius="12" Padding="15" Margin="0,0,0,10">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <Border Grid.Column="0" Background="#2C2C2E" CornerRadius="6" Padding="10,6" Margin="0,0,15,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Type}" Foreground="#D1D1D6" FontWeight="Bold" FontSize="11"/>
+                            </Border>
+
+                            <TextBlock Grid.Column="1" Text="{Binding Value}" FontWeight="Bold" FontSize="15" Foreground="#F2F2F7" VerticalAlignment="Center"/>
+
+                            <Button Grid.Column="2" Content="Delete" Classes="ActionBtn" Click="DeleteRule_Click" CommandParameter="{Binding}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>

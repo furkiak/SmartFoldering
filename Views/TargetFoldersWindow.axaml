@@ -1,0 +1,63 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:SmartFoldering"
+        xmlns:models="using:SmartFoldering.Models"
+        x:Class="SmartFoldering.TargetFoldersWindow"
+        x:DataType="local:TargetFoldersWindow"
+        Title="Destination Folders"
+        Width="450" Height="550" 
+        Background="#18181A" 
+        SystemDecorations="None" 
+        WindowStartupLocation="Manual"
+        CanResize="False"> 
+    
+    <Window.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="25" PointerPressed="Window_PointerPressed">
+        
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="0,0,0,25">
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Destinations" FontWeight="Bold" FontSize="22" Foreground="#FFFFFF"/>
+                <TextBlock Text="{Binding FolderName}" Foreground="#8E8E93" FontSize="13" Margin="0,2,0,0"/>
+            </StackPanel>
+            
+            <Button Grid.Column="1" Content="+" Classes="IconBtn" Click="AddTargetFolder_Click" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button Grid.Column="2" Content="✕" Classes="IconBtn" Click="Back_Click" VerticalAlignment="Center"/>
+        </Grid>
+
+     <ListBox Grid.Row="1" ItemsSource="{Binding ObservableTargets}" Background="Transparent">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:TargetFolder">
+                    <Border Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1" CornerRadius="12" Padding="18" Margin="0,0,0,12">
+                        <Grid RowDefinitions="Auto, Auto">
+                            <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Foreground="#F2F2F7"/>
+                                <TextBlock Text="{Binding Path}" Foreground="#8E8E93" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                                <Button Content="Delete" Classes="ActionBtn" Click="DeleteTarget_Click" CommandParameter="{Binding}"/>
+                                <Button Content="Edit" Classes="ActionBtn" Click="EditTarget_Click" CommandParameter="{Binding}"/>
+                                <Button Content="Filters" Classes="DestBtn" Click="OpenRules_Click" CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
