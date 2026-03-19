@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 <p align="center">
-  <img src="[https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SSF.png](https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SS.png)" width="600" title="SmartFoldering">
+  <img src="https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SS.png" width="600" title="SmartFoldering">
 </p>
 
  
