@@ -5,6 +5,11 @@
 ![Architecture](https://img.shields.io/badge/Architecture-MVVM-success)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
+<p align="center">
+  <img src="[https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SSF.png](https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SS.png)" width="600" title="SmartFoldering">
+</p>
+
+ 
 **SmartFoldering** is an enterprise-grade, automated file organization tool built with .NET Core and Avalonia UI. It silently monitors your specified directories in the background and instantly routes incoming files to their designated destination folders based on custom rules (extensions or keywords).
 
 ---
@@ -27,13 +32,6 @@
 3. **Define Rules:** Tell the app to move `.pdf` files to `Documents`, or files containing the word "setup" to the `Installers` folder.
 4. **Sit Back & Relax:** SmartFoldering handles the rest in the background!
 
-## 📸 Screenshots
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SSF.png" width="600" title="ActiveRest Dashboard">
-</p>
- 
- 
 
 ## 🛠️ Tech Stack & Architecture
 
