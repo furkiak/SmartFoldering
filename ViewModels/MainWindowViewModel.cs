@@ -143,7 +143,12 @@ namespace SmartFoldering.ViewModels
                         $"{Path.GetFileName(m.Source)} → {m.Destination}"));
                 StatusText = $"Preview: {moves.Count} proposed move(s). Review before starting.";
             }
-            catch (Exception ex) { _previewRevision = -1; StatusText = "Preview failed: " + ex.Message; }
+            catch (Exception ex)
+            {
+                _previewRevision = -1;
+                StatusText = "Preview failed · fix the folder rules before starting monitoring.";
+                PreviewText = ex.Message;
+            }
         }
 
         [RelayCommand]
@@ -164,7 +169,8 @@ namespace SmartFoldering.ViewModels
                 if (_previewRevision != _settingsManager.Revision)
                 {
                     Preview();
-                    StatusText += " Press Start monitoring again after reviewing.";
+                    if (_previewRevision == _settingsManager.Revision)
+                        StatusText += " Press Start monitoring again after reviewing.";
                     return;
                 }
                 _settingsManager.GetSettings().MonitoringEnabled = true;

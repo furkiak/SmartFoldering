@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Show invalid-rule details in the preview panel and keep Start paused without a misleading retry prompt.
+- Give the Windows app its own icon and clarify what the sign-in startup setting does.
 - Remove a missing Avalonia DataGrid theme that prevented Release builds.
 - Default monitoring to off for this revision and require a reviewed preview before starting.
 - Reject overlapping/cyclic folders, linked paths and cross-volume automatic moves.

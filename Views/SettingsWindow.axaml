@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="SmartFoldering.SettingsWindow"
+        Title="SmartFoldering Settings"
         Width="350" SizeToContent="Height"
         Background="#18181A"
         SystemDecorations="None"
@@ -16,7 +17,7 @@
                           Foreground="#F2F2F7" 
                           FontWeight="SemiBold"
                           FontSize="14"/>
-                <TextBlock Text="Automatically starts tracking your folders in the background when your computer turns on." 
+                <TextBlock Text="Opens SmartFoldering when you sign in. Monitoring resumes only if it was enabled before the previous exit."
                            Foreground="#8E8E93" FontSize="12" TextWrapping="Wrap" Margin="25,0,0,0"/>
             </StackPanel>
 

@@ -4,7 +4,7 @@
 
 ![SmartFoldering workflow diagram, not a screenshot](docs/workflow.svg)
 
-> Preview source revision: Windows Release build and synthetic-file tests pass. The revised native interface, tray and clean-machine package have not yet been exercised. The diagram is a workflow explanation, not a product screenshot.
+> Preview source revision: Windows Release build and synthetic-file tests pass. The main and Settings windows were opened on Windows 11; an existing overlapping source/destination rule produced a safe preview error, and monitoring stayed paused. Tray, actual moves, and clean-machine installation remain unverified. The diagram is a workflow explanation, not a product screenshot.
 
 ## Quick start on Windows
 
@@ -18,6 +18,8 @@ dotnet run --project SmartFoldering.csproj
 2. Choose **Preview moves**. The proposed source and destination paths are displayed without moving a file.
 3. Review the list, then choose **Start monitoring**. If rules change, monitoring pauses and another preview is required.
 4. Choose **Pause monitoring** before **Undo last move**. Undo refuses to overwrite an existing source or move a destination whose SHA-256 differs from the recorded file.
+
+If preview reports that a destination is the same as, inside, or above its source, edit the destination to a separate folder and run Preview again. Monitoring remains off; a failed preview cannot authorize a Start.
 
 For source development: `dotnet test SmartFoldering.Tests/SmartFoldering.Tests.csproj -c Release`. There is no published installer for this revision. Start with disposable test files until the native Windows acceptance check is complete.
 
@@ -48,4 +50,4 @@ The code uses cross-platform APIs in several places, but macOS and Linux builds,
 
 ## Türkçe
 
-SmartFoldering, kurallara göre yerel dosyaları taşımadan önce **önizleme** gösteren C# / Avalonia uygulamasıdır. Yeni sürümde izleme varsayılan olarak kapalıdır. Kaynak, hedef ve kuralı ekledikten sonra **Preview moves** ile yolları incele; **Start monitoring** ile başlat. Kurallar değişince izleme durur. **Undo last move** yalnızca izleme duraklatıldığında, kaynak yol boşsa ve hedef dosya taşınan dosyayla aynı SHA-256 değerindeyse çalışır. Başlangıç için gerçek belgelerin yerine geçici test dosyaları kullan. Windows arayüz ve temiz makine testi bitmeden bu kaynak paketi herkese açık kararlı sürüm olarak sunulmuyor.
+SmartFoldering, kurallara göre yerel dosyaları taşımadan önce **önizleme** gösteren C# / Avalonia uygulamasıdır. Yeni sürümde izleme varsayılan olarak kapalıdır. Kaynak, hedef ve kuralı ekledikten sonra **Preview moves** ile yolları incele; **Start monitoring** ile başlat. Kaynak/hedef iç içe olursa önizleme açıklayıcı hata verir ve izleme başlamaz. Kurallar değişince izleme durur. **Undo last move** yalnızca izleme duraklatıldığında, kaynak yol boşsa ve hedef dosya taşınan dosyayla aynı SHA-256 değerindeyse çalışır. Başlangıç için gerçek belgelerin yerine geçici test dosyaları kullan. Ana/Ayarlar penceresi gerçek Windows oturumunda görüldü; gerçek dosya taşıma ve temiz makine testi bitmeden bu kaynak paketi herkese açık kararlı sürüm olarak sunulmuyor.

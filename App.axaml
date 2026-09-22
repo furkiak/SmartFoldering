@@ -8,7 +8,7 @@
 
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/avalonia-logo.ico" ToolTipText="Corporate File Organizer">
+            <TrayIcon Icon="/Assets/smartfoldering.ico" ToolTipText="SmartFoldering · local file organizer">
                 <TrayIcon.Menu>
                     <NativeMenu>
                         <NativeMenuItem Header="Settings" Click="Settings_Clicked"/>

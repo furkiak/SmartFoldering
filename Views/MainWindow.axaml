@@ -4,6 +4,7 @@
         x:Class="SmartFoldering.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="SmartFoldering"
+        Icon="/Assets/smartfoldering.ico"
         Width="640" Height="750" MinWidth="540" MinHeight="640"
         Background="#10263D"
         SystemDecorations="None" 
