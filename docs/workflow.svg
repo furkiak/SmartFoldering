@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" role="img" aria-labelledby="title desc">
+  <title id="title">SmartFoldering workflow diagram</title>
+  <desc id="desc">A conceptual flow from a watched source and rule to a read-only move preview, then a journaled move and guarded undo. This is not a screenshot.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#071b2d"/><stop offset="1" stop-color="#163e60"/></linearGradient>
+    <linearGradient id="card" x2="0" y2="1"><stop stop-color="#e6f1fb"/><stop offset="1" stop-color="#bfd8ed"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000b16" flood-opacity=".34"/></filter>
+  </defs>
+  <rect width="960" height="430" rx="28" fill="url(#bg)"/>
+  <circle cx="860" cy="36" r="200" fill="#45c1e0" opacity=".07"/>
+  <text x="42" y="62" font-family="Arial,sans-serif" font-size="13" letter-spacing="2" fill="#add4e9">SMARTFOLDERING / SAFE LOCAL WORKFLOW</text>
+  <text x="42" y="107" font-family="Arial,sans-serif" font-size="31" font-weight="700" fill="#ffffff">See every move before it happens.</text>
+  <text x="42" y="139" font-family="Arial,sans-serif" font-size="14" fill="#afd2e7">Windows · C# · Avalonia · journaled operations</text>
+  <g filter="url(#shadow)">
+    <rect x="42" y="172" width="876" height="208" rx="25" fill="#f3f8fd" opacity=".97"/>
+    <rect x="63" y="191" width="245" height="167" rx="16" fill="url(#card)"/>
+    <rect x="83" y="211" width="38" height="30" rx="5" fill="#3070a3"/><path d="M83 215h13l5 5h20" fill="none" stroke="#c9e7f7" stroke-width="5"/>
+    <text x="132" y="232" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#143653">Choose a source</text>
+    <text x="84" y="273" font-family="Arial,sans-serif" font-size="13" fill="#315976">Downloads / report.pdf</text>
+    <rect x="84" y="292" width="202" height="34" rx="9" fill="#ffffff" opacity=".8"/>
+    <text x="100" y="314" font-family="Arial,sans-serif" font-size="12" fill="#1f4d72">Rule: .pdf → Documents</text>
+    <text x="319" y="282" font-family="Arial,sans-serif" font-size="27" fill="#6c9bbd">→</text>
+    <rect x="358" y="191" width="245" height="167" rx="16" fill="url(#card)"/>
+    <text x="379" y="229" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#143653">Preview first</text>
+    <rect x="379" y="246" width="202" height="53" rx="9" fill="#ffffff" opacity=".8"/>
+    <text x="393" y="267" font-family="Arial,sans-serif" font-size="12" fill="#315976">report.pdf</text>
+    <text x="393" y="286" font-family="Arial,sans-serif" font-size="12" fill="#315976">→ Documents/report.pdf</text>
+    <text x="379" y="329" font-family="Arial,sans-serif" font-size="12" fill="#315976">Read-only until you start</text>
+    <text x="616" y="282" font-family="Arial,sans-serif" font-size="27" fill="#6c9bbd">→</text>
+    <rect x="656" y="191" width="241" height="167" rx="16" fill="url(#card)"/>
+    <text x="676" y="229" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#143653">Move with a record</text>
+    <text x="677" y="266" font-family="Arial,sans-serif" font-size="13" fill="#315976">Intent → moved</text>
+    <text x="677" y="290" font-family="Arial,sans-serif" font-size="13" fill="#315976">SHA-256 checked undo</text>
+    <text x="677" y="314" font-family="Arial,sans-serif" font-size="13" fill="#315976">No overwrite on conflict</text>
+  </g>
+  <text x="42" y="408" font-family="Arial,sans-serif" font-size="12" fill="#a5cbe2">Workflow diagram · not a screenshot · use disposable files for first evaluation</text>
+</svg>

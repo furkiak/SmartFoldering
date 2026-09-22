@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using SmartFoldering.Models;
 using SmartFoldering.Services;
+using SmartFoldering.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -63,12 +64,14 @@ namespace SmartFoldering
 
             if (dialog.IsSaved)
             {
-                var newRule = new Rule { Type = dialog.SelectedType, Value = dialog.RuleValue };
-                _observableRules.Add(newRule);
-                _currentTarget.Rules = _observableRules.ToList();
-
-             
-                await App.GlobalSettings.SaveSettingsAsync();
+                try
+                {
+                    var newRule = new Rule { Type = dialog.SelectedType, Value = dialog.RuleValue };
+                    _observableRules.Add(newRule);
+                    _currentTarget.Rules = _observableRules.ToList();
+                    await App.GlobalSettings.SaveSettingsAsync();
+                }
+                catch (Exception ex) { RestoreRules(); new NotificationWindow("Rule not saved", ex.Message).Show(); }
             }
         }
 
@@ -76,12 +79,22 @@ namespace SmartFoldering
         {
             if ((sender as Button)?.CommandParameter is Rule rule)
             {
-                _observableRules.Remove(rule);
-                _currentTarget.Rules = _observableRules.ToList();
-
-              
-                await App.GlobalSettings.SaveSettingsAsync();
+                try
+                {
+                    _observableRules.Remove(rule);
+                    _currentTarget.Rules = _observableRules.ToList();
+                    await App.GlobalSettings.SaveSettingsAsync();
+                }
+                catch (Exception ex) { RestoreRules(); new NotificationWindow("Rule not saved", ex.Message).Show(); }
             }
+        }
+
+        private void RestoreRules()
+        {
+            _parentFolder = App.GlobalSettings.GetSettings().WatchFolders.First(x => x.Id == _parentFolder.Id);
+            _currentTarget = _parentFolder.TargetFolders.First(x => x.Id == _currentTarget.Id);
+            _observableRules.Clear();
+            foreach (var rule in _currentTarget.Rules) _observableRules.Add(rule);
         }
     }
 }

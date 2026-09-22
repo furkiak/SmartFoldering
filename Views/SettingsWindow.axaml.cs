@@ -4,6 +4,9 @@ using Avalonia.Interactivity;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System;
+using System.IO;
+using SmartFoldering.Views;
 
 namespace SmartFoldering
 {
@@ -44,23 +47,23 @@ namespace SmartFoldering
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            try
             {
-                using RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-                if (key != null)
+                if (OperatingSystem.IsWindows())
                 {
+                    using RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
+                        ?? throw new InvalidOperationException("Could not open Windows startup settings.");
                     if (StartupCheckBox.IsChecked == true)
-                    { 
-                        string exePath = Process.GetCurrentProcess().MainModule.FileName;
+                    {
+                        string exePath = Path.Combine(AppContext.BaseDirectory, "SmartFoldering.exe");
+                        if (!File.Exists(exePath)) throw new FileNotFoundException("The published SmartFoldering.exe is required for auto-start.", exePath);
                         key.SetValue(AppName, $"\"{exePath}\"");
                     }
-                    else
-                    { 
-                        key.DeleteValue(AppName, false);
-                    }
+                    else key.DeleteValue(AppName, false);
                 }
+                this.Close();
             }
-            this.Close();
+            catch (Exception ex) { new NotificationWindow("Settings not saved", ex.Message).Show(); }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

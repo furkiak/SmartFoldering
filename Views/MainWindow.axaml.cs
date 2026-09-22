@@ -23,7 +23,7 @@ namespace SmartFoldering.Views
             base.OnOpened(e);
             PositionWindowBottomRight();
 
-            if (_isFirstLaunch && ViewModel.WatchFolders.Count > 0)
+            if (_isFirstLaunch && App.Engine.IsRunning && ViewModel.WatchFolders.Count > 0)
             {
                 this.Hide();
             }

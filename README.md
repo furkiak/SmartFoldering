@@ -1,80 +1,51 @@
-# 📂 SmartFoldering
+# SmartFoldering
 
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgray)
-![Framework](https://img.shields.io/badge/Framework-.NET%20Core%20%7C%20Avalonia%20UI-512BD4)
-![Architecture](https://img.shields.io/badge/Architecture-MVVM-success)
-![License](https://img.shields.io/badge/License-MIT-blue)
+**Preview and organize local files with explicit control.** SmartFoldering is a C#/.NET 9 Avalonia desktop app. It matches top-level files in selected source folders against extension or filename-keyword rules, then moves them to destination folders. This revision adds a read-only preview, a single processing queue, a persistent move journal, and a guarded one-step undo.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/furkiak/SmartFoldering/refs/heads/main/SS.png" width="600" title="SmartFoldering">
-</p>
+![SmartFoldering workflow diagram, not a screenshot](docs/workflow.svg)
 
- 
-**SmartFoldering** is an enterprise-grade, automated file organization tool built with .NET Core and Avalonia UI. It silently monitors your specified directories in the background and instantly routes incoming files to their designated destination folders based on custom rules (extensions or keywords).
+> Preview source revision: Windows Release build and synthetic-file tests pass. The revised native interface, tray and clean-machine package have not yet been exercised. The diagram is a workflow explanation, not a product screenshot.
 
----
+## Quick start on Windows
 
-## ✨ Key Features
+Install the .NET 9 SDK and run from the repository root:
 
-* **⚡ Real-Time Monitoring:** Utilizes `FileSystemWatcher` to detect and move files the exact millisecond they are created or renamed.
-* **🧠 Smart Rule Engine:** Route files based on exact extensions (e.g., `.pdf`, `.jpg`) or specific keywords in the filename (e.g., `invoice`, `report`).
-* **🛡️ Enterprise Reliability:** * **Thread-Safe & Lock Handling:** Intelligently waits for large files to finish downloading or copying before attempting to move them.
-  * **Atomic Saves:** User settings are saved using temporary files and swapping, completely preventing data corruption during unexpected power losses.
-  * **Single Instance (Mutex):** Prevents multiple instances of the app from running and causing race conditions.
-* **👻 Silent Background Operation:** Runs seamlessly in the system tray. Includes a "Run at Windows Startup" feature via Registry integration.
-* **📝 Professional Logging:** Integrated with **Serilog**. All events, warnings, and errors are safely logged in the `AppData` folder for easy debugging.
-* **🎨 Modern UI/UX:** Features a distraction-free, premium dark-grayscale design built with Avalonia UI.
+```powershell
+dotnet run --project SmartFoldering.csproj
+```
 
-## 🚀 How It Works
+1. Add a source folder, such as a **test** `Downloads` folder. Add a destination folder and an extension rule such as `.pdf`.
+2. Choose **Preview moves**. The proposed source and destination paths are displayed without moving a file.
+3. Review the list, then choose **Start monitoring**. If rules change, monitoring pauses and another preview is required.
+4. Choose **Pause monitoring** before **Undo last move**. Undo refuses to overwrite an existing source or move a destination whose SHA-256 differs from the recorded file.
 
-1. **Add a Source Folder:** (e.g., your `Downloads` or `Desktop` folder).
-2. **Add Target Folders:** (e.g., `Invoices`, `Photos`, `Installers`).
-3. **Define Rules:** Tell the app to move `.pdf` files to `Documents`, or files containing the word "setup" to the `Installers` folder.
-4. **Sit Back & Relax:** SmartFoldering handles the rest in the background!
+For source development: `dotnet test SmartFoldering.Tests/SmartFoldering.Tests.csproj -c Release`. There is no published installer for this revision. Start with disposable test files until the native Windows acceptance check is complete.
 
+## Example preview
 
-## 🛠️ Tech Stack & Architecture
+With `C:\Test\Downloads\report.pdf` and rule `.pdf → C:\Test\Documents`:
 
-* **Framework:** .NET Core
-* **UI Framework:** [Avalonia UI](https://avaloniaui.net/) (Cross-platform desktop application framework)
-* **Architecture:** Strict **MVVM** (Model-View-ViewModel) using `CommunityToolkit.Mvvm`
-* **Logging:** `Serilog` (File Sinks)
-* **Serialization:** `System.Text.Json` (Async & culture-independent)
+```text
+Preview: 1 proposed move
+report.pdf → C:\Test\Documents\report.pdf
+```
 
----
----
+If `report.pdf` already exists at the destination, the plan proposes `report (1).pdf`. At execution, a new conflict or changed source causes a **skip and error**, not an overwrite. A watcher event and five-minute fallback scan enter the same single-reader queue. The scan does not recurse into subfolders. The app waits for exclusive access and stable file metadata before moving, but no watcher can guarantee the exact instant an external process has finished writing.
 
-# 📂 SmartFoldering (Türkçe)
+## Safety boundaries
 
-**SmartFoldering**, .NET Core ve Avalonia UI kullanılarak geliştirilmiş, kurumsal (enterprise) seviyede otomatik bir dosya düzenleme aracıdır. Belirlediğiniz klasörleri arka planda sessizce izler ve gelen dosyaları özel kurallarınıza (uzantı veya anahtar kelime) göre anında hedef klasörlerine taşır.
+- A destination cannot equal, contain, sit inside, or feed a watched source. Overlapping watched sources are rejected; these checks also prevent A→B→A cycles.
+- Linked/junction paths and linked files are rejected. Automatic source and destination must be on the same volume. Temporary download suffixes such as `.part` and `.crdownload` are skipped.
+- Each move writes an intent to `%APPDATA%\SmartFoldering\operations.jsonl`, then moves the file and writes a completion event. SHA-256 identifies the moved bytes for undo. A crash between move and completion leaves an intent that can be reconciled by the undo path if the destination still matches.
+- Rule settings use unique temporary files, disk flush and an atomic replacement with `settings.json.bak`. A failed save reports an error and the running engine keeps the last committed rules. Editing rules pauses monitoring before the new settings are saved.
+- Windows auto-start is a separate setting; it should be enabled only after the workflow has been checked on the user's machine.
 
----
+Operation history can expose file names and paths. It is local to the OS user profile and is not uploaded by the source app. There is no automatic retention or secure erasure. Back up important data independently; a journal and one-step undo do not replace a backup. See [recovery and limits](docs/SAFETY.md).
 
-## ✨ Öne Çıkan Özellikler
+## Scope and verification
 
-* ** Gerçek Zamanlı İzleme:** Dosyalar oluşturulduğu veya yeniden adlandırıldığı milisaniye içerisinde `FileSystemWatcher` ile tespit edilip taşınır.
-* ** Akıllı Kural Motoru:** Dosyaları tam uzantılarına (örn. `.pdf`, `.jpg`) veya dosya adındaki kelimelere (örn. `fatura`, `rapor`) göre yönlendirin.
-* ** Kurumsal Güvenilirlik (Enterprise Reliability):** * **Kilit Yönetimi (File Lock Handling):** Büyük dosyaların indirilmesinin veya kopyalanmasının bitmesini sabırla bekler, dosya kilidi açılmadan işlem yapmaz.
-  * **Atomik Kayıt (Atomic Save):** Ayar dosyaları geçici dosyalar üzerinden yazılır. Elektrik kesintisi veya çökme durumunda veri kaybı/bozulması yaşanmaz.
-  * **Tekil Çalışma (Mutex):** Uygulamanın yanlışlıkla birden fazla kez açılıp sistemin çökmesini engeller.
-* ** Sessiz Arka Plan Çalışması:** Sistem tepsisinde (Tray) yorulmadan çalışır. "Windows Başlangıcında Çalıştır" (Kayıt Defteri entegrasyonu) özelliği içerir.
-* ** Profesyonel Loglama:** **Serilog** entegrasyonu sayesinde tüm işlemler, uyarılar ve hatalar `AppData` klasöründe günlük olarak güvenle saklanır.
-* ** Modern UI/UX:** Avalonia UI ile tasarlanmış, dikkat dağıtmayan, koyu gri tonlarda premium kurumsal arayüz.
+The code uses cross-platform APIs in several places, but macOS and Linux builds, packaging, permissions, watcher behavior and UX have **not** been verified. Windows is the intended first release target. The source currently targets .NET 9; moving to a later runtime is a separate compatibility task. See [support gates](docs/SUPPORT.md), [changelog](CHANGELOG.md), [contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md). Licensed under [MIT](LICENSE).
 
-## 🚀 Nasıl Çalışır?
+## Türkçe
 
-1. **Kaynak Klasör Ekleyin:** (Örn: `İndirilenler` veya `Masaüstü` klasörünüz).
-2. **Hedef Klasörler Ekleyin:** (Örn: `Faturalar`, `Fotoğraflar`, `Kurulum Dosyaları`).
-3. **Kurallar Belirleyin:** Uygulamaya `.pdf` uzantılı dosyaları `Belgeler` klasörüne, içinde "setup" geçen dosyaları `Kurulum Dosyaları` klasörüne taşımasını söyleyin.
-4. **Arkanıza Yaslanın:** SmartFoldering arka planda tüm işi sizin yerinize yapsın!
-
-## 🛠️ Kullanılan Teknolojiler ve Mimari
-
-* **Altyapı:** .NET Core
-* **Arayüz (UI):** [Avalonia UI](https://avaloniaui.net/) (Çapraz platform masaüstü uygulama altyapısı)
-* **Mimari:** `CommunityToolkit.Mvvm` kullanılarak tam bağımsız **MVVM** (Model-View-ViewModel)
-* **Loglama:** `Serilog` (Günlük dosya kaydı)
-* **Serileştirme:** `System.Text.Json` (Asenkron ve kültürel bağımsız - Culture Invariant)
-
----
-**License / Lisans:** [MIT License](LICENSE)
+SmartFoldering, kurallara göre yerel dosyaları taşımadan önce **önizleme** gösteren C# / Avalonia uygulamasıdır. Yeni sürümde izleme varsayılan olarak kapalıdır. Kaynak, hedef ve kuralı ekledikten sonra **Preview moves** ile yolları incele; **Start monitoring** ile başlat. Kurallar değişince izleme durur. **Undo last move** yalnızca izleme duraklatıldığında, kaynak yol boşsa ve hedef dosya taşınan dosyayla aynı SHA-256 değerindeyse çalışır. Başlangıç için gerçek belgelerin yerine geçici test dosyaları kullan. Windows arayüz ve temiz makine testi bitmeden bu kaynak paketi herkese açık kararlı sürüm olarak sunulmuyor.

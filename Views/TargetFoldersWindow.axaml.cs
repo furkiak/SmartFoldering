@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using SmartFoldering.Models;
 using SmartFoldering.Services;
+using SmartFoldering.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -48,11 +49,14 @@ namespace SmartFoldering
 
             if (dialog.IsSaved)
             {
-                var newTarget = new TargetFolder { Name = dialog.FolderName, Path = dialog.FolderPath };
-                 
-                _observableTargets.Add(newTarget);
-                _currentFolder.TargetFolders = _observableTargets.ToList();
-                await App.GlobalSettings.SaveSettingsAsync();
+                try
+                {
+                    var newTarget = new TargetFolder { Name = dialog.FolderName, Path = dialog.FolderPath };
+                    _observableTargets.Add(newTarget);
+                    _currentFolder.TargetFolders = _observableTargets.ToList();
+                    await App.GlobalSettings.SaveSettingsAsync();
+                }
+                catch (Exception ex) { RestoreTargets(); new NotificationWindow("Destination not saved", ex.Message).Show(); }
             }
         }
          
@@ -60,9 +64,13 @@ namespace SmartFoldering
         {
             if ((sender as Button)?.CommandParameter is TargetFolder target)
             {
-                _observableTargets.Remove(target);
-                _currentFolder.TargetFolders = _observableTargets.ToList();
-                await App.GlobalSettings.SaveSettingsAsync();
+                try
+                {
+                    _observableTargets.Remove(target);
+                    _currentFolder.TargetFolders = _observableTargets.ToList();
+                    await App.GlobalSettings.SaveSettingsAsync();
+                }
+                catch (Exception ex) { RestoreTargets(); new NotificationWindow("Destination not saved", ex.Message).Show(); }
             }
         }
          
@@ -75,17 +83,16 @@ namespace SmartFoldering
 
                 if (dialog.IsSaved)
                 {
-                    target.Name = dialog.FolderName;
-                    target.Path = dialog.FolderPath;
-
-                    _currentFolder.TargetFolders = _observableTargets.ToList();
-                    await App.GlobalSettings.SaveSettingsAsync();
-
-                    var index = _observableTargets.IndexOf(target);
-                    if (index >= 0)
+                    try
                     {
-                        _observableTargets[index] = target;
+                        target.Name = dialog.FolderName;
+                        target.Path = dialog.FolderPath;
+                        _currentFolder.TargetFolders = _observableTargets.ToList();
+                        await App.GlobalSettings.SaveSettingsAsync();
+                        var index = _observableTargets.IndexOf(target);
+                        if (index >= 0) _observableTargets[index] = target;
                     }
+                    catch (Exception ex) { RestoreTargets(); new NotificationWindow("Destination not saved", ex.Message).Show(); }
                 }
             }
         }
@@ -121,6 +128,13 @@ namespace SmartFoldering
                 this.Hide();
                 rulesWindow.Show();
             }
+        }
+
+        private void RestoreTargets()
+        {
+            _currentFolder = App.GlobalSettings.GetSettings().WatchFolders.First(x => x.Id == _currentFolder.Id);
+            _observableTargets.Clear();
+            foreach (var target in _currentFolder.TargetFolders) _observableTargets.Add(target);
         }
     }
 }

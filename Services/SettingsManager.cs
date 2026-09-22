@@ -1,97 +1,121 @@
-﻿using Serilog;
 using SmartFoldering.Models;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace SmartFoldering.Services
+namespace SmartFoldering.Services;
+
+public interface ISettingsManager
 {
-    public interface ISettingsManager
+    AppSettings GetSettings();
+    AppSettings GetCommittedSettings();
+    int Revision { get; }
+    Task SaveSettingsAsync();
+    bool CanAddRuleToTarget(string watchFolderId, RuleType type, string value);
+}
+
+public sealed class SettingsManager : ISettingsManager
+{
+    private readonly string _settingsFilePath;
+    private readonly SemaphoreSlim _writeGate = new(1, 1);
+    private AppSettings _currentSettings;
+    private AppSettings _committedSettings;
+    private int _revision;
+    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+    public event Action? RulesChanging;
+
+    public int Revision => Volatile.Read(ref _revision);
+
+    public SettingsManager(string? dataFolder = null)
     {
-        AppSettings GetSettings();
-        Task SaveSettingsAsync();
-        bool CanAddRuleToTarget(string watchFolderId, RuleType type, string value);
+        var directory = dataFolder ?? Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SmartFoldering");
+        Directory.CreateDirectory(directory);
+        _settingsFilePath = Path.Combine(directory, "settings.json");
+        _currentSettings = ReadOrRecover();
+        _committedSettings = Clone(_currentSettings);
     }
 
-    public class SettingsManager : ISettingsManager
+    public AppSettings GetSettings() => _currentSettings;
+    public AppSettings GetCommittedSettings() => Clone(_committedSettings);
+
+    public async Task SaveSettingsAsync()
     {
-        private readonly string _settingsFilePath;
-        private readonly string _settingsDirectory;
-        private AppSettings _currentSettings;
-
-        public SettingsManager()
+        await _writeGate.WaitAsync();
+        try
         {
-            _settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SmartFoldering");
-            _settingsFilePath = Path.Combine(_settingsDirectory, "settings.json");
-
-            if (!Directory.Exists(_settingsDirectory))
+            var rulesChanged = JsonSerializer.Serialize(_currentSettings.WatchFolders) !=
+                               JsonSerializer.Serialize(_committedSettings.WatchFolders);
+            if (rulesChanged)
             {
-                Directory.CreateDirectory(_settingsDirectory);
+                RulesChanging?.Invoke();
+                _currentSettings.MonitoringEnabled = false;
             }
-             
-            LoadSettingsSync();
-        }
-
-        public AppSettings GetSettings() => _currentSettings;
-         
-        private void LoadSettingsSync()
-        {
+            MovePlanner.Validate(_currentSettings);
+            var json = JsonSerializer.Serialize(_currentSettings, JsonOptions);
+            var path = _settingsFilePath;
+            var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
             try
             {
-                if (File.Exists(_settingsFilePath))
+                await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
                 {
-                    string json = File.ReadAllText(_settingsFilePath);
-                    _currentSettings = JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+                    var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+                    await stream.WriteAsync(bytes);
+                    stream.Flush(flushToDisk: true);
                 }
-                else
-                {
-                    _currentSettings = new AppSettings();
-                    SaveSettingsSync();  
-                }
+                if (File.Exists(path)) File.Replace(temporary, path, path + ".bak");
+                else File.Move(temporary, path);
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Setting load error"); 
-                _currentSettings = new AppSettings();
-            }
+            finally { if (File.Exists(temporary)) File.Delete(temporary); }
+            _committedSettings = Clone(_currentSettings);
+            Interlocked.Increment(ref _revision);
         }
-
-        private void SaveSettingsSync()
+        catch
         {
-            string json = JsonSerializer.Serialize(_currentSettings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_settingsFilePath, json);
+            _currentSettings = Clone(_committedSettings);
+            throw;
         }
-         
-        public async Task SaveSettingsAsync()
+        finally { _writeGate.Release(); }
+    }
+
+    public bool CanAddRuleToTarget(string watchFolderId, RuleType type, string value)
+    {
+        var watch = _currentSettings.WatchFolders.FirstOrDefault(x => x.Id == watchFolderId);
+        return watch != null && !watch.TargetFolders.SelectMany(x => x.Rules)
+            .Any(rule => rule.Type == type && rule.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private AppSettings ReadOrRecover()
+    {
+        if (!File.Exists(_settingsFilePath))
         {
-            try
-            { 
-                string tempPath = _settingsFilePath + ".tmp";
-
-                string json = JsonSerializer.Serialize(_currentSettings, new JsonSerializerOptions { WriteIndented = true });
-                await File.WriteAllTextAsync(tempPath, json);
-
-                File.Move(tempPath, _settingsFilePath, true);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error saving settings");  
-            }
+            if (!File.Exists(_settingsFilePath + ".bak")) return new AppSettings();
+            var backup = Read(_settingsFilePath + ".bak");
+            File.Copy(_settingsFilePath + ".bak", _settingsFilePath);
+            return backup;
         }
-
-        public bool CanAddRuleToTarget(string watchFolderId, RuleType type, string value)
+        try { return Read(_settingsFilePath); }
+        catch (JsonException)
         {
-            var watchFolder = _currentSettings.WatchFolders.FirstOrDefault(w => w.Id == watchFolderId);
-            if (watchFolder == null) return false;
-
-            foreach (var target in watchFolder.TargetFolders)
+            AppSettings backup;
+            try { backup = Read(_settingsFilePath + ".bak"); }
+            catch (Exception ex) when (ex is JsonException or IOException)
             {
-                bool exists = target.Rules.Any(r => r.Type == type && r.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
-                if (exists) return false;
+                throw new InvalidDataException("Settings are damaged; originals were preserved. Restore settings.json or its backup before running.", ex);
             }
-            return true;
+            File.Move(_settingsFilePath, _settingsFilePath + ".corrupt-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff"));
+            File.Copy(_settingsFilePath + ".bak", _settingsFilePath);
+            return backup;
         }
     }
+
+    private static AppSettings Read(string path) =>
+        JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(path)) ??
+        throw new JsonException("Settings must contain an object.");
+
+    private static AppSettings Clone(AppSettings settings) =>
+        JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(settings))!;
 }

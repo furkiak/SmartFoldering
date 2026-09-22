@@ -4,11 +4,11 @@
         x:Class="SmartFoldering.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="SmartFoldering"
-        Width="450" Height="550" 
-        Background="#18181A" 
+        Width="640" Height="750" MinWidth="540" MinHeight="640"
+        Background="#10263D"
         SystemDecorations="None" 
         WindowStartupLocation="Manual"
-        CanResize="False"> 
+        CanResize="True">
     
     <Window.Styles>
         <Style Selector="Button.ActionBtn">
@@ -70,29 +70,29 @@
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto, *, Auto" Margin="25" PointerPressed="Window_PointerPressed">
+    <Grid RowDefinitions="Auto, *, Auto, Auto" Margin="25" PointerPressed="Window_PointerPressed">
         
 
         <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto" Margin="0,0,0,25">
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock Text="Source Folders" FontWeight="Bold" FontSize="26" Foreground="#FFFFFF"/>
-                <TextBlock Text="Directories to monitor automatically." Foreground="#8E8E93" FontSize="13" Margin="0,4,0,0"/>
+                <TextBlock Text="SmartFoldering" FontWeight="Bold" FontSize="26" Foreground="#FFFFFF"/>
+                <TextBlock Text="Review local file moves before enabling monitoring." Foreground="#B7CDE2" FontSize="13" Margin="0,4,0,0"/>
             </StackPanel>
             
-            <Button Grid.Column="1" Content="⚙" Classes="IconBtn" Command="{Binding OpenSettingsCommand}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <Button Grid.Column="2" Content="+" Classes="IconBtn" Command="{Binding AddWatchFolderCommand}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <Button Grid.Column="3" Content="✕" Classes="IconBtn" Click="HideWindow_Click" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Content="⚙" Classes="IconBtn" Command="{Binding OpenSettingsCommand}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip.Tip="Settings" AutomationProperties.Name="Settings"/>
+            <Button Grid.Column="2" Content="+" Classes="IconBtn" Command="{Binding AddWatchFolderCommand}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip.Tip="Add source folder" AutomationProperties.Name="Add source folder"/>
+            <Button Grid.Column="3" Content="✕" Classes="IconBtn" Click="HideWindow_Click" VerticalAlignment="Center" ToolTip.Tip="Hide window" AutomationProperties.Name="Hide window"/>
         </Grid>
 
  
         <ListBox Grid.Row="1" ItemsSource="{Binding WatchFolders}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1" CornerRadius="12" Padding="18" Margin="0,0,0,12">
+                    <Border Background="#193651" BorderBrush="#3E6182" BorderThickness="1" CornerRadius="14" Padding="18" Margin="0,0,0,12">
                         <Grid RowDefinitions="Auto, Auto">
                             <StackPanel Grid.Row="0" Margin="0,0,0,15">
                                 <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Foreground="#F2F2F7"/>
-                                <TextBlock Text="{Binding Path}" Foreground="#8E8E93" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
+                                <TextBlock Text="{Binding Path}" Foreground="#B7CDE2" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
@@ -111,8 +111,28 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15" Margin="0,20,0,0">
-            <Button Content="Force Scan" Classes="ActionBtn" Command="{Binding ForceScanCommand}" Width="110" HorizontalContentAlignment="Center"/>
+        <StackPanel Grid.Row="2" Spacing="10" Margin="0,15,0,0">
+            <TextBlock Text="{Binding StatusText}" Foreground="#C1E1FF" FontSize="13" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Preview moves" Classes="ActionBtn" Command="{Binding PreviewCommand}"/>
+                <Button Content="{Binding MonitoringButtonText}" Classes="DestBtn" Command="{Binding ToggleMonitoringCommand}"/>
+                <Button Content="Undo last move" Classes="ActionBtn" Command="{Binding UndoLastCommand}"/>
+                <Button Content="Scan now" Classes="ActionBtn" Command="{Binding ForceScanCommand}"/>
+            </StackPanel>
+            <Border Background="#193651" BorderBrush="#3E6182" BorderThickness="1" CornerRadius="14" Padding="12">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Proposed moves · read-only" Foreground="#C1E1FF" FontWeight="SemiBold"/>
+                    <ScrollViewer MaxHeight="105">
+                        <TextBlock Text="{Binding PreviewText}" Foreground="#F2F7FC" FontSize="12" TextWrapping="Wrap"/>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
         </StackPanel>
+        <Border Grid.Row="3" Background="#193651" BorderBrush="#3E6182" BorderThickness="1" CornerRadius="14" Padding="12" Margin="0,10,0,0">
+            <StackPanel Spacing="6">
+                <TextBlock Text="Recent operations" Foreground="#C1E1FF" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding RecentMoveText}" Foreground="#F2F7FC" FontSize="12" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

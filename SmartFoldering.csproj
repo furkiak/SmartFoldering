@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <Compile Remove="SmartFoldering.Tests\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

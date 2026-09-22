@@ -34,5 +34,6 @@ namespace SmartFoldering.Models
     public class AppSettings
     {
         public List<WatchFolder> WatchFolders { get; set; } = new List<WatchFolder>();
+        public bool MonitoringEnabled { get; set; }
     }
 }

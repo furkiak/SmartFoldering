@@ -24,6 +24,7 @@ namespace SmartFoldering
         
             GlobalSettings = new SettingsManager();
             Engine = new FileOrganizerEngine(GlobalSettings);
+            GlobalSettings.RulesChanging += () => Engine.Stop();
             DialogService = new DialogService();  
             Engine.OnScanCompleted += (movedCount) =>
             {
@@ -41,15 +42,26 @@ namespace SmartFoldering
                 });
             };
 
-            Engine.Start();
+            if (GlobalSettings.GetCommittedSettings().MonitoringEnabled)
+            {
+                try { Engine.Start(); }
+                catch (Exception ex)
+                {
+                    GlobalSettings.GetSettings().MonitoringEnabled = false;
+                    new NotificationWindow("Monitoring paused", ex.Message).Show();
+                }
+            }
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 AppMainWindow = new MainWindow();
                 desktop.MainWindow = AppMainWindow;
-                desktop.MainWindow.Hide();
-
-                new NotificationWindow("SmartFoldering is active", "The system has started running in the background.").Show();
+                if (Engine.IsRunning)
+                {
+                    desktop.MainWindow.Hide();
+                    new NotificationWindow("SmartFoldering is active", "Monitoring approved folders in the background.").Show();
+                }
+                else desktop.MainWindow.Show();
             }
 
             base.OnFrameworkInitializationCompleted();
