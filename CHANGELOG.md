@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Local candidate 0.3.0-preview.2
+
+- Target .NET 10 LTS for the application, tests and Windows CI source; select stable .NET 10 SDK feature bands through global.json.
+- Replace vulnerable transitive Tmds.DBus.Protocol 0.20.0 with the maintainer's patched 0.21.3. Audit direct/transitive NuGet dependencies and fail restore on NU1901–NU1904 instead of hiding advisories.
+- Retain Avalonia 11.2.7, profile/journal formats and the previous appearance and file-safety behavior. Preserve prior packages; runtime/native compatibility is recorded independently of the older .NET 9 evidence.
+
 ### Local candidate 0.3.0-preview.1
 
 - Add Light/Dark and 100/150/200% actual font-size preferences with visible profile settings and atomic persistence; retain legacy Dark/100 defaults.

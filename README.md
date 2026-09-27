@@ -1,8 +1,10 @@
 # SmartFoldering
 
-**Preview and organize local files with explicit control.** SmartFoldering is a C#/.NET 9 Avalonia desktop app. It matches top-level files in selected source folders against extension or filename-keyword rules, then moves them to destination folders. This revision adds a read-only preview, a single processing queue, a persistent move journal, and a guarded one-step undo.
+**Preview and organize local files with explicit control.** SmartFoldering is a C#/.NET 10 Avalonia desktop app. It matches top-level files in selected source folders against extension or filename-keyword rules, then moves them to destination folders. This revision adds a read-only preview, a single processing queue, a persistent move journal, and a guarded one-step undo.
 
 ![SmartFoldering workflow diagram, not a screenshot](docs/workflow.svg)
+
+The local **0.3.0-preview.2** runtime candidate moves to .NET 10 LTS and patches the vulnerable D-Bus dependency. The first .NET 10 Release run passed all **40 tests with zero skipped** and produced a self-contained Windows x64 output containing .NET 10.0.12, without build warnings. Clean-clone and final-package native verification are separate gates; see [runtime scope](docs/RUNTIME.md). The appearance evidence below records the earlier .NET 9 candidate.
 
 > Local appearance candidate 0.3.0-preview.1: **40 tests pass, zero skipped** in the opt-in Windows run, retaining real file/watcher/permission checks and adding atomic appearance persistence. **Settings** now offers Light/Dark and real 100%/150%/200% font size. Native Light/Dark fonts, minimum-width reflow, keyboard scrolling, preview approval across appearance saves, active watcher, exact-byte move/undo and ReadOnly-error/retry were exercised in a disposable Windows profile. Full cross-theme, alternate DPI and screen-reader coverage remains open. Earlier native Preview → Start → Pause → Undo and second-instance evidence remains valid for the prior layout. Windows sign-in startup, another account and clean-machine installation remain unverified. The diagram explains the workflow.
 
@@ -14,7 +16,7 @@ Choose **Settings → Theme / Text size**, then Save. Opaque surfaces, wrapping 
 
 ## Quick start on Windows
 
-Install the .NET 9 SDK and run from the repository root:
+Install a stable .NET 10 SDK and run from the repository root. `global.json` selects a .NET 10 feature band and excludes preview SDKs:
 
 ```powershell
 dotnet run --project SmartFoldering.csproj
@@ -62,7 +64,7 @@ Operation history can expose file names and paths. It is local to the OS user pr
 
 ## Scope and verification
 
-The code uses cross-platform APIs in several places, but macOS and Linux builds, packaging, permissions, watcher behavior and UX have **not** been verified. Windows is the intended first release target. The source currently targets .NET 9; moving to a later runtime is a separate compatibility task. See [support gates](docs/SUPPORT.md), [changelog](CHANGELOG.md), [contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md). Licensed under [MIT](LICENSE).
+The code uses cross-platform APIs in several places, but macOS and Linux builds, packaging, permissions, watcher behavior and UX have **not** been verified. Windows is the intended first release target. The local **0.3.0-preview.2** candidate targets .NET 10 LTS while retaining Avalonia 11.2.7 and the existing profile formats. A direct `Tmds.DBus.Protocol` 0.21.3 reference replaces the vulnerable transitive 0.20.0 dependency. Restore audits both direct and transitive packages and fails on known vulnerability warnings; it does not prove the absence of unknown flaws or Linux compatibility. See [runtime migration and security scope](docs/RUNTIME.md), [support gates](docs/SUPPORT.md), [changelog](CHANGELOG.md), [contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md). Licensed under [MIT](LICENSE).
 
 ## Türkçe
 
