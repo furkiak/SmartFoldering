@@ -12,11 +12,10 @@ namespace SmartFoldering
 {
     public partial class RulesWindow : Window
     {
-        private WatchFolder _parentFolder;
-        private TargetFolder _currentTarget;
-        private SettingsManager _settingsManager;
-        private Window _parentWindow;
-        private ObservableCollection<Rule> _observableRules;
+        private WatchFolder _parentFolder = new();
+        private TargetFolder _currentTarget = new();
+        private Window? _parentWindow;
+        private ObservableCollection<Rule> _observableRules = new();
 
         public RulesWindow() { InitializeComponent(); }
 
@@ -24,7 +23,6 @@ namespace SmartFoldering
         {
             _parentFolder = parentFolder;
             _currentTarget = currentTarget;
-            _settingsManager = settingsManager;
             _parentWindow = parentWindow;
 
             _observableRules = new ObservableCollection<Rule>(_currentTarget.Rules);
@@ -49,7 +47,7 @@ namespace SmartFoldering
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            _parentWindow.Show();
+            _parentWindow?.Show();
             this.Close();
         }
 

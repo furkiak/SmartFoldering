@@ -17,7 +17,7 @@
                           Foreground="#F2F2F7" 
                           FontWeight="SemiBold"
                           FontSize="14"/>
-                <TextBlock Text="Opens SmartFoldering when you sign in. Monitoring resumes only if it was enabled before the previous exit."
+                <TextBlock x:Name="StartupDescription" Text="Opens SmartFoldering when you sign in. Monitoring resumes only if it was enabled before the previous exit."
                            Foreground="#8E8E93" FontSize="12" TextWrapping="Wrap" Margin="25,0,0,0"/>
             </StackPanel>
 

@@ -11,10 +11,17 @@ namespace SmartFoldering
     public partial class App : Application
     {
  
-        public static SettingsManager GlobalSettings { get; private set; }
-        public static FileOrganizerEngine Engine { get; private set; }
-        public static MainWindow AppMainWindow { get; private set; }
-        public static IDialogService DialogService { get; private set; }  
+        private static SettingsManager? _globalSettings;
+        private static FileOrganizerEngine? _engine;
+        private static IDialogService? _dialogService;
+        public static SettingsManager GlobalSettings => _globalSettings
+            ?? throw new InvalidOperationException("Settings are not initialized.");
+        public static FileOrganizerEngine Engine => _engine
+            ?? throw new InvalidOperationException("The file engine is not initialized.");
+        public static MainWindow? AppMainWindow { get; private set; }
+        public static IDialogService DialogService => _dialogService
+            ?? throw new InvalidOperationException("Dialogs are not initialized.");
+        public static bool IsShuttingDown { get; private set; }
 
       
         public override void Initialize() { AvaloniaXamlLoader.Load(this); }
@@ -22,10 +29,10 @@ namespace SmartFoldering
         public override void OnFrameworkInitializationCompleted()
         {
         
-            GlobalSettings = new SettingsManager();
-            Engine = new FileOrganizerEngine(GlobalSettings);
+            _globalSettings = new SettingsManager();
+            _engine = new FileOrganizerEngine(GlobalSettings);
             GlobalSettings.RulesChanging += () => Engine.Stop();
-            DialogService = new DialogService();  
+            _dialogService = new DialogService();
             Engine.OnScanCompleted += (movedCount) =>
             {
                 Dispatcher.UIThread.Post(() =>
@@ -79,8 +86,15 @@ namespace SmartFoldering
 
         private void Exit_Clicked(object sender, EventArgs e)
         {
-            Engine?.Stop();
-            Environment.Exit(0);
+            RequestExit();
+        }
+
+        public static void RequestExit()
+        {
+            IsShuttingDown = true;
+            _engine?.Stop();
+            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                desktop.Shutdown();
         }
     }
 }

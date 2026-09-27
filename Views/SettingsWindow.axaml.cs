@@ -28,10 +28,17 @@ namespace SmartFoldering
 
         private void LoadSettings()
         {
+            if (Services.AppStorage.Profile.IsSeparate)
+            {
+                StartupCheckBox.IsEnabled = false;
+                StartupCheckBox.Content = "Windows sign-in startup is unavailable for a separate profile";
+                StartupDescription.Text = "This profile keeps its files separate and does not change your normal Windows startup entry.";
+                return;
+            }
             
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                using RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
+                using RegistryKey? key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
                 if (key != null)
                 {
                     var val = key.GetValue(AppName); 
@@ -49,7 +56,7 @@ namespace SmartFoldering
         {
             try
             {
-                if (OperatingSystem.IsWindows())
+                if (OperatingSystem.IsWindows() && !Services.AppStorage.Profile.IsSeparate)
                 {
                     using RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
                         ?? throw new InvalidOperationException("Could not open Windows startup settings.");

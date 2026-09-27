@@ -4,7 +4,11 @@
 
 ![SmartFoldering workflow diagram, not a screenshot](docs/workflow.svg)
 
-> Preview source revision: Windows Release build and synthetic-file tests pass. The main and Settings windows were opened on Windows 11; an existing overlapping source/destination rule produced a safe preview error, and monitoring stayed paused. Tray, actual moves, and clean-machine installation remain unverified. The diagram is a workflow explanation, not a product screenshot.
+> Preview source revision: 19 Windows tests pass, including a real 64 MiB file, download rename, repeated scans, guarded undo and stopped watcher. A separate native profile completed Preview → Start → Pause → Undo twice, preserving a destination collision and the nonmatching file. A second instance was rejected cleanly. Windows sign-in startup, real watcher-buffer overflow, another Windows account and clean-machine installation remain unverified. The diagram is a workflow explanation.
+
+![Windows 11 native preview of a disposable fixture, 27 September 2026](docs/windows-preview-2026-09-27.png)
+
+The native check used disposable local files. The normal profile's settings and Windows startup entry stayed unchanged. File hashes and the durable `intent → moved → undone` journal were checked after each cycle. **Quit** stops the worker and closes the app; **Hide window** keeps it available in the tray.
 
 ## Quick start on Windows
 
@@ -21,7 +25,13 @@ dotnet run --project SmartFoldering.csproj
 
 If preview reports that a destination is the same as, inside, or above its source, edit the destination to a separate folder and run Preview again. Monitoring remains off; a failed preview cannot authorize a Start.
 
-For source development: `dotnet test SmartFoldering.Tests/SmartFoldering.Tests.csproj -c Release`. There is no published installer for this revision. Start with disposable test files until the native Windows acceptance check is complete.
+For a separate disposable or portable profile, launch with `--data-directory` and an absolute folder path. Settings, the move journal and logs stay in that directory; different profiles use separate instance locks. Windows sign-in startup is disabled for these profiles, so saving their Settings window cannot change the normal profile's registry entry. No existing settings are copied automatically.
+
+```powershell
+dotnet run --project SmartFoldering.csproj -- --data-directory E:\SmartFoldering-TestProfile
+```
+
+For source development: `dotnet test SmartFoldering.Tests/SmartFoldering.Tests.csproj -c Release`. There is no published installer for this revision. Start with disposable test files; the local native check does not prove every user's filesystem or permissions.
 
 ## Example preview
 
@@ -50,4 +60,4 @@ The code uses cross-platform APIs in several places, but macOS and Linux builds,
 
 ## Türkçe
 
-SmartFoldering, kurallara göre yerel dosyaları taşımadan önce **önizleme** gösteren C# / Avalonia uygulamasıdır. Yeni sürümde izleme varsayılan olarak kapalıdır. Kaynak, hedef ve kuralı ekledikten sonra **Preview moves** ile yolları incele; **Start monitoring** ile başlat. Kaynak/hedef iç içe olursa önizleme açıklayıcı hata verir ve izleme başlamaz. Kurallar değişince izleme durur. **Undo last move** yalnızca izleme duraklatıldığında, kaynak yol boşsa ve hedef dosya taşınan dosyayla aynı SHA-256 değerindeyse çalışır. Başlangıç için gerçek belgelerin yerine geçici test dosyaları kullan. Ana/Ayarlar penceresi gerçek Windows oturumunda görüldü; gerçek dosya taşıma ve temiz makine testi bitmeden bu kaynak paketi herkese açık kararlı sürüm olarak sunulmuyor.
+SmartFoldering, kurallara göre yerel dosyaları taşımadan önce **önizleme** gösteren C# / Avalonia uygulamasıdır. Yeni sürümde izleme varsayılan olarak kapalıdır. Kaynak, hedef ve kuralı ekledikten sonra **Preview moves** ile yolları incele; **Start monitoring** ile başlat. Kaynak/hedef iç içe olursa önizleme açıklayıcı hata verir ve izleme başlamaz. Kurallar değişince izleme durur. **Undo last move** yalnızca izleme duraklatıldığında, kaynak yol boşsa ve hedef dosya taşınan dosyayla aynı SHA-256 değerindeyse çalışır. Windows 11'de ayrı geçici profilde iki gerçek taşıma/geri alma döngüsü, çakışan hedefi koruma ve ikinci örneğin temiz kapanması doğrulandı; kişisel ayarlar değişmedi. 19 test geçti. **Quit** izlemeyi durdurup uygulamayı kapatır; **Hide window** tepside çalışmayı sürdürür. Gerçek watcher buffer taşması, başka hesap ve temiz makine kurulumu ayrı açık kontrollerdir.

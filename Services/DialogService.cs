@@ -17,7 +17,7 @@ namespace SmartFoldering.Services
     public class DialogService : IDialogService
     {
       
-        private Avalonia.Controls.Window GetMainWindow()
+        private Avalonia.Controls.Window? GetMainWindow()
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -42,6 +42,7 @@ namespace SmartFoldering.Services
         public void OpenTargetFoldersWindow(WatchFolder folder)
         {
             var mainWindow = GetMainWindow();
+            if (mainWindow == null) return;
             var targetWindow = new TargetFoldersWindow(folder, App.GlobalSettings, mainWindow);
 
             mainWindow?.Hide();

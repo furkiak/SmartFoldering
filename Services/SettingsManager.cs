@@ -31,8 +31,7 @@ public sealed class SettingsManager : ISettingsManager
 
     public SettingsManager(string? dataFolder = null)
     {
-        var directory = dataFolder ?? Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SmartFoldering");
+        var directory = dataFolder ?? AppStorage.Profile.Directory;
         Directory.CreateDirectory(directory);
         _settingsFilePath = Path.Combine(directory, "settings.json");
         _currentSettings = ReadOrRecover();

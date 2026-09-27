@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using SmartFoldering.Services;
 
 namespace SmartFoldering
 {
@@ -17,10 +18,18 @@ namespace SmartFoldering
         [STAThread]
         public static void Main(string[] args)
         {
+            try { AppStorage.Configure(args); }
+            catch (Exception ex)
+            {
+                if (OperatingSystem.IsWindows())
+                    MessageBoxW(IntPtr.Zero, ex.Message, "SmartFoldering startup", 0x10);
+                Environment.ExitCode = 2;
+                return;
+            }
             Mutex? mutex = null;
             bool ownsMutex = false;
            
-            string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SmartFoldering", "Logs");
+            string logDirectory = Path.Combine(AppStorage.Profile.Directory, "Logs");
             string logPath = Path.Combine(logDirectory, "log-.txt");
 
             Log.Logger = new LoggerConfiguration()
@@ -43,7 +52,7 @@ namespace SmartFoldering
                 };
 
                
-                const string appName = "SmartFoldering_UniqueAppKey_2023";
+                string appName = AppStorage.Profile.MutexName;
                 mutex = new Mutex(true, appName, out bool createdNew);
                 ownsMutex = createdNew;
 

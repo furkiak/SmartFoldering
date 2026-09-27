@@ -9,10 +9,10 @@ namespace SmartFoldering
     public partial class RuleDialogWindow : Window
     {
         public RuleType SelectedType { get; private set; }
-        public string RuleValue { get; private set; }
+        public string RuleValue { get; private set; } = string.Empty;
         public bool IsSaved { get; private set; } = false;
          
-        public Func<RuleType, string, bool> RuleValidator { get; set; }
+        public Func<RuleType, string, bool>? RuleValidator { get; set; }
 
         public RuleDialogWindow() { InitializeComponent(); }
 
@@ -32,7 +32,7 @@ namespace SmartFoldering
             if (SelectedType == RuleType.Extension && !val.StartsWith("."))
                 val = "." + val;
 
-            val = val.ToLower();
+            val = val.ToLowerInvariant();
              
             if (RuleValidator != null && !RuleValidator(SelectedType, val))
             {

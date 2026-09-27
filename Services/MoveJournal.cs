@@ -18,8 +18,7 @@ public sealed class MoveJournal
 
     public MoveJournal(string? dataFolder = null)
     {
-        var folder = dataFolder ?? Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SmartFoldering");
+        var folder = dataFolder ?? AppStorage.Profile.Directory;
         Directory.CreateDirectory(folder);
         _path = Path.Combine(folder, "operations.jsonl");
     }

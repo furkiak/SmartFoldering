@@ -12,22 +12,22 @@ namespace SmartFoldering.Models
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public RuleType Type { get; set; }
-        public string Value { get; set; }  
+        public string Value { get; set; } = string.Empty;
     }
 
     public class TargetFolder
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string Name { get; set; }
-        public string Path { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
         public List<Rule> Rules { get; set; } = new List<Rule>();
     }
 
     public class WatchFolder
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string Name { get; set; }
-        public string Path { get; set; } 
+        public string Name { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
         public List<TargetFolder> TargetFolders { get; set; } = new List<TargetFolder>();
     }
 

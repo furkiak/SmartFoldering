@@ -9,12 +9,14 @@ namespace SmartFoldering.Views
 {
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
+        private MainWindowViewModel ViewModel => DataContext as MainWindowViewModel
+            ?? throw new InvalidOperationException("The main window requires its initialized view model.");
         private bool _isFirstLaunch = true;
 
         public MainWindow()
         {
             InitializeComponent(); 
+            if (Services.AppStorage.Profile.IsSeparate) Title = "SmartFoldering · separate profile";
             DataContext = new MainWindowViewModel(App.GlobalSettings, App.DialogService);
         }
 
@@ -60,9 +62,14 @@ namespace SmartFoldering.Views
 
         protected override void OnClosing(WindowClosingEventArgs e)
         {
-            e.Cancel = true;
-            this.Hide();
+            if (!App.IsShuttingDown)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
         }
+
+        private void ExitWindow_Click(object sender, RoutedEventArgs e) => App.RequestExit();
          
         private void Window_PointerPressed(object sender, PointerPressedEventArgs e)
         {

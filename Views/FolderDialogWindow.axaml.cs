@@ -8,8 +8,8 @@ namespace SmartFoldering
 {
     public partial class FolderDialogWindow : Window
     {
-        public string FolderName { get; private set; }
-        public string FolderPath { get; private set; }
+        public string FolderName { get; private set; } = string.Empty;
+        public string FolderPath { get; private set; } = string.Empty;
         public bool IsSaved { get; private set; } = false;
 
 
@@ -34,6 +34,7 @@ namespace SmartFoldering
             try
             {
                 var topLevel = TopLevel.GetTopLevel(this);
+                if (topLevel?.StorageProvider == null) return;
                 var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
                     Title = "Select Folder",

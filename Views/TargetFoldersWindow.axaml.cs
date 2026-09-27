@@ -12,11 +12,11 @@ namespace SmartFoldering
 {
     public partial class TargetFoldersWindow : Window
     {
-        private WatchFolder _currentFolder;
-        private SettingsManager _settingsManager;
+        private WatchFolder _currentFolder = new();
+        private SettingsManager? _settingsManager;
          
-        private ObservableCollection<TargetFolder> _observableTargets;
-        private Window _parentWindow;
+        private ObservableCollection<TargetFolder> _observableTargets = new();
+        private Window? _parentWindow;
         public TargetFoldersWindow()
         {
             InitializeComponent();
@@ -117,14 +117,14 @@ namespace SmartFoldering
          
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            _parentWindow.Show();  
+            _parentWindow?.Show();
             this.Close();  
         } 
         private void OpenRules_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.CommandParameter is TargetFolder target)
             {
-                var rulesWindow = new RulesWindow(_currentFolder, target, _settingsManager, this);
+                var rulesWindow = new RulesWindow(_currentFolder, target, _settingsManager ?? App.GlobalSettings, this);
                 this.Hide();
                 rulesWindow.Show();
             }

@@ -23,7 +23,7 @@ namespace SmartFoldering.ViewModels
         [ObservableProperty] private string _recentMoveText = "No moves in this session.";
 
         [ObservableProperty]
-        private ObservableCollection<WatchFolder> _watchFolders;
+        private ObservableCollection<WatchFolder> _watchFolders = new();
 
         public MainWindowViewModel() { }
 
@@ -164,6 +164,7 @@ namespace SmartFoldering.ViewModels
                     await _settingsManager.SaveSettingsAsync();
                     MonitoringButtonText = "Start monitoring";
                     StatusText = "Monitoring paused. Undo is available.";
+                    InvalidatePreview("Monitoring paused. Run Preview again before restarting.");
                     return;
                 }
                 if (_previewRevision != _settingsManager.Revision)
@@ -178,7 +179,7 @@ namespace SmartFoldering.ViewModels
                 App.Engine.Start();
                 MonitoringButtonText = "Pause monitoring";
                 StatusText = "Monitoring approved folders.";
-                InvalidatePreview();
+                InvalidatePreview("Monitoring is active. Pause before undo or reviewing a new plan.");
             }
             catch (Exception ex)
             {
@@ -206,6 +207,7 @@ namespace SmartFoldering.ViewModels
             {
                 var undone = App.Engine.UndoLast();
                 StatusText = "Restored " + Path.GetFileName(undone.Source) + ".";
+                InvalidatePreview("A file was restored. Run Preview again before restarting.");
                 RefreshRecent();
             }
             catch (Exception ex) { StatusText = "Undo refused: " + ex.Message; }
@@ -223,6 +225,10 @@ namespace SmartFoldering.ViewModels
             catch (Exception ex) { RecentMoveText = "Journal needs attention: " + ex.Message; }
         }
 
-        private void InvalidatePreview() { _previewRevision = -1; PreviewText = "Rules changed. Run Preview again before starting."; }
+        private void InvalidatePreview(string message = "Rules changed. Run Preview again before starting.")
+        {
+            _previewRevision = -1;
+            PreviewText = message;
+        }
     }
 }
