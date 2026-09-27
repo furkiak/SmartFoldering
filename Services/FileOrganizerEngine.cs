@@ -171,6 +171,9 @@ public sealed class FileOrganizerEngine : IDisposable
         {
             await foreach (var path in reader.ReadAllAsync(token))
             {
+                // Coalesce queued requests, while allowing a new scan when events arrive
+                // after the active scan captured its file list (notably watcher overflow).
+                lock (_gate) _pending.Remove(path);
                 try
                 {
                     if (path.Length == 0) await ScanAsync(token);
@@ -178,7 +181,6 @@ public sealed class FileOrganizerEngine : IDisposable
                 }
                 catch (OperationCanceledException) when (token.IsCancellationRequested) { break; }
                 catch (Exception ex) { Report(ex.Message); }
-                finally { lock (_gate) _pending.Remove(path); }
             }
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { }

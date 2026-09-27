@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Retain an overflow rescan requested while another full scan is active; keep queued requests coalesced without losing events that arrive after the active file-list snapshot.
+- Verify actual Windows kernel watcher overflow with the production 64 KiB buffer, lost notification recovery, unchanged file hashes and one journal result per file.
+- Add opt-in owned-fixture Windows ACL and read-only replacement-denial tests; preserve settings/backup/committed state and restore permissions before cleanup.
 - Allow a separate absolute data directory for isolated/portable profiles, including profile-specific logs and instance locks; keep their Settings window away from the normal Windows startup entry.
 - Exercise a real 64 MiB file, temporary-download rename, duplicate fallback requests, guarded undo and stopped watcher behavior on Windows.
 - Complete disposable native move/pause/undo and second-instance checks; add an accessible Quit action and keep preview status accurate during monitoring.
