@@ -40,17 +40,16 @@ Quit and restart retained Dark/200 with monitoring paused; both owned test
 processes exited. The three known normal-profile file hashes and Run entry
 digest stayed unchanged. No personal files were copied.
 
-The dated local records are outside this repository, under
-`E:\GithubDosyalar_Kurtarma_2026-09-27\_GithubProfesyonelHedef\evidence`:
+The dated validation records are retained with the local release candidate,
+outside this source repository:
 
 - `SmartFoldering-package-f1c8d6c-net10.json` binds the code commit, ZIP,
   clean-test/publish proof and native result.
 - `Runtime-net10-2026-09-27\SmartFoldering-f1c8d6c\native-result.json` records
   the exact-package observations and remaining boundaries.
 
-This documentation follow-up records existing acceptance of that code/ZIP. It
-does not rebuild, repackage or rerun it; later documentation-only HEADs are not
-new runtime acceptance. The wider `2b41133` .NET 9 font/minimum-window/ReadOnly
+These results apply to the identified code commit and ZIP; later documentation
+changes do not constitute another runtime validation. The wider `2b41133` .NET 9 font/minimum-window/ReadOnly
 matrix remains historical. Selected Light/200 and Dark/200 flows do not prove
 the full new-runtime failure/accessibility matrix. ReadOnly UI retry, tray/startup,
 DPI/screen readers, Linux D-Bus/API, macOS, another account, fresh-machine setup,

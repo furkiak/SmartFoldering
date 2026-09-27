@@ -1,14 +1,12 @@
 # SmartFoldering
 
-**Preview and organize local files with explicit control.** SmartFoldering is a C#/.NET 10 Avalonia desktop app. It matches top-level files in selected source folders against extension or filename-keyword rules, then moves them to destination folders. This revision adds a read-only preview, a single processing queue, a persistent move journal, and a guarded one-step undo.
+**See every proposed file move before it happens.** SmartFoldering is a Windows desktop app built with C#, .NET 10 and Avalonia. Define extension or filename rules, review the destination for each top-level file, then start monitoring. Pause and undo the last move when the original path is free and the moved bytes still match.
 
-![SmartFoldering workflow diagram, not a screenshot](docs/workflow.svg)
+![SmartFoldering preview of a proposed PDF move in the Windows app](docs/windows-preview-2026-09-27.jpg)
 
-The local **0.3.0-preview.2** runtime candidate moves to .NET 10 LTS and patches the vulnerable D-Bus dependency. A clean clone of **`f1c8d6c63f95deeba83266cb1aecaf772bfcc100`** passed **40 tests with zero skipped** and warning-free self-contained Windows x64 publish containing .NET 10.0.12. Its exact final ZIP passed selected native Light/200 Preview/Start, Dark/200 appearance Save with the watcher retained, a later byte-exact move, Pause/Undo and paused restart on 27 September 2026. [Runtime scope](docs/RUNTIME.md) records the package hash, bounded native manifest and remaining gates. This documentation follow-up does not rebuild or repackage that ZIP. The wider appearance evidence below records the earlier .NET 9 candidate.
+*Real Windows capture from 27 September 2026 with disposable test files. The current build adds light/dark themes and larger text; this capture uses the earlier layout and shows the test directory.*
 
-> Local appearance candidate 0.3.0-preview.1: **40 tests pass, zero skipped** in the opt-in Windows run, retaining real file/watcher/permission checks and adding atomic appearance persistence. **Settings** now offers Light/Dark and real 100%/150%/200% font size. Native Light/Dark fonts, minimum-width reflow, keyboard scrolling, preview approval across appearance saves, active watcher, exact-byte move/undo and ReadOnly-error/retry were exercised in a disposable Windows profile. Full cross-theme, alternate DPI and screen-reader coverage remains open. Earlier native Preview → Start → Pause → Undo and second-instance evidence remains valid for the prior layout. Windows sign-in startup, another account and clean-machine installation remain unverified. The diagram explains the workflow.
-
-![Earlier Windows 11 native preview before appearance controls, 27 September 2026](docs/windows-preview-2026-09-27.png)
+The **0.3.0-preview.2** Windows package passed 40 tests and selected native preview, move, pause, undo, appearance and restart checks. It is a local candidate, with no published installer or clean-machine acceptance yet. See [runtime results](docs/RUNTIME.md), [appearance checks](docs/APPEARANCE.md) and the [workflow diagram](docs/workflow.svg).
 
 The native check used disposable local files. The normal profile's settings and Windows startup entry stayed unchanged. File hashes and the durable `intent → moved → undone` journal were checked after each cycle. **Quit** stops the worker and closes the app; **Hide window** keeps it available in the tray.
 

@@ -44,11 +44,11 @@ Native inspection also found that the Fluent textbox watermark remained half opa
 
 An owned ReadOnly `settings.json` caused native Save to fail with persistent, readable feedback. The main and backup digests and Dark/200% preferences stayed unchanged; pending Light/100% did not apply. After the original attribute was restored, retry succeeded, saved Light/100%, and preserved the previous main bytes as the backup. Saving disables/re-enables Save. The failure path updates the enlarged error layout before restoring keyboard focus and bringing Save into view: native Dark/200% at 360px changed the scroll offset from 322 to 452, exposing the entire error and both retry/cancel buttons. The earlier focus-only revision left Save below the viewport and was superseded. Dark/150% persistence was verified after exit/relaunch. Sampled normal settings/backups and Windows Run-entry digests matched the before/after checkpoint.
 
-![Minimum-width dark main window with 200% fonts](images/appearance-dark-200-minimum.png)
+![Minimum-width dark main window with 200% fonts](images/appearance-dark-200-minimum.jpg)
 
-![Native corrected opaque watermark](images/appearance-dark-200-placeholder.png)
+![Native corrected opaque watermark](images/appearance-dark-200-placeholder.jpg)
 
-![Persistent native ReadOnly error before retry](images/appearance-readonly-error.png)
+![Persistent native ReadOnly error before retry](images/appearance-readonly-error.jpg)
 
 No remote publication, normal startup change, OS display/theme preference change or personal-profile migration was performed. Full cross-theme interaction coverage, screen-reader output, alternate DPI, physical tray reopening, another OS user and clean-machine installation remain open. Source ratios and screenshots do not certify WCAG conformance. Earlier native screenshots remain historical evidence for their dated layout.
 
