@@ -1,142 +1,56 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:SmartFoldering.ViewModels"
-        x:Class="SmartFoldering.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Title="SmartFoldering"
-        Icon="/Assets/smartfoldering.ico"
-        Width="640" Height="750" MinWidth="540" MinHeight="640"
-        Background="#10263D"
-        SystemDecorations="None" 
-        WindowStartupLocation="Manual"
-        CanResize="True">
-    
-    <Window.Styles>
-        <Style Selector="Button.ActionBtn">
-            <Setter Property="Background" Value="#2C2C2E"/>
-            <Setter Property="Foreground" Value="#D1D1D6"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-        <Style Selector="Button.ActionBtn:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#3A3A3C"/>
-            <Setter Property="Foreground" Value="#FFFFFF"/>
-        </Style>
-        
-        <Style Selector="Button.DestBtn">
-            <Setter Property="Background" Value="#48484A"/> 
-            <Setter Property="Foreground" Value="#F2F2F7"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-        </Style>
-        <Style Selector="Button.DestBtn:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#636366"/>
-        </Style>
-
-        <Style Selector="Button.IconBtn">
-            <Setter Property="Background" Value="#2C2C2E"/>
-            <Setter Property="Foreground" Value="#E5E5EA"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
-            <Setter Property="CornerRadius" Value="18"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.IconBtn:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#3A3A3C"/>
-        </Style>
-
-        <Style Selector="ListBox">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-        <Style Selector="ListBoxItem">
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="0"/>
-        </Style>
-        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
-        </Style>
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
-        </Style>
-        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
-        </Style>
-    </Window.Styles>
-
-    <Grid RowDefinitions="Auto, *, Auto, Auto" Margin="25" PointerPressed="Window_PointerPressed">
-        
-
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto, Auto" Margin="0,0,0,25">
-            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock Text="SmartFoldering" FontWeight="Bold" FontSize="26" Foreground="#FFFFFF"/>
-                <TextBlock Text="Review local file moves before enabling monitoring." Foreground="#B7CDE2" FontSize="13" TextWrapping="Wrap" Margin="0,4,0,0"/>
-            </StackPanel>
-            
-            <Button Grid.Column="1" Content="⚙" Classes="IconBtn" Command="{Binding OpenSettingsCommand}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip.Tip="Settings" AutomationProperties.Name="Settings"/>
-            <Button Grid.Column="2" Content="+" Classes="IconBtn" Command="{Binding AddWatchFolderCommand}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip.Tip="Add source folder" AutomationProperties.Name="Add source folder"/>
-            <Button Grid.Column="3" Content="✕" Classes="IconBtn" Click="HideWindow_Click" VerticalAlignment="Center" ToolTip.Tip="Hide window" AutomationProperties.Name="Hide window"/>
-            <Button Grid.Column="4" Content="Quit" Classes="ActionBtn" Click="ExitWindow_Click" Margin="10,0,0,0" VerticalAlignment="Center" ToolTip.Tip="Stop monitoring and quit" AutomationProperties.Name="Quit SmartFoldering"/>
-        </Grid>
-
- 
-        <ListBox Grid.Row="1" ItemsSource="{Binding WatchFolders}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border Background="#193651" BorderBrush="#3E6182" BorderThickness="1" CornerRadius="14" Padding="18" Margin="0,0,0,12">
-                        <Grid RowDefinitions="Auto, Auto">
-                            <StackPanel Grid.Row="0" Margin="0,0,0,15">
-                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Foreground="#F2F2F7"/>
-                                <TextBlock Text="{Binding Path}" Foreground="#B7CDE2" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"/>
+        x:Class="SmartFoldering.Views.MainWindow" x:DataType="vm:MainWindowViewModel"
+        Title="SmartFoldering" Icon="/Assets/smartfoldering.ico"
+        Width="680" Height="750" MinWidth="380" MinHeight="400"
+        SystemDecorations="Full" WindowStartupLocation="Manual" CanResize="True">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24" Spacing="16">
+            <TextBlock Text="SmartFoldering" FontWeight="Bold" FontSize="{DynamicResource TitleFontSize}"/>
+            <TextBlock Text="Review local file moves before enabling monitoring." Foreground="{DynamicResource SecondaryText}"/>
+            <WrapPanel>
+                <Button Content="Settings" Classes="ActionBtn" Command="{Binding OpenSettingsCommand}" AutomationProperties.Name="Settings"/>
+                <Button Content="Add source folder" Classes="ActionBtn" Command="{Binding AddWatchFolderCommand}"/>
+                <Button Content="Hide window" Classes="ActionBtn" Click="HideWindow_Click"/>
+                <Button Content="Quit" Classes="ActionBtn" Click="ExitWindow_Click" AutomationProperties.Name="Quit SmartFoldering"/>
+            </WrapPanel>
+            <ListBox ItemsSource="{Binding WatchFolders}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{DynamicResource CardSurface}" BorderBrush="{DynamicResource ControlBoundary}" BorderThickness="1" CornerRadius="14" Padding="16">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="{DynamicResource SectionFontSize}"/>
+                                <TextBlock Text="{Binding Path}" Foreground="{DynamicResource SecondaryText}" FontSize="{DynamicResource CaptionFontSize}"/>
+                                <WrapPanel>
+                                    <Button Content="Delete" Classes="ActionBtn" Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteWatchFolderCommand}" CommandParameter="{Binding}"/>
+                                    <Button Content="Edit" Classes="ActionBtn" Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).EditWatchFolderCommand}" CommandParameter="{Binding}"/>
+                                    <Button Content="Destinations" Classes="DestBtn" Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenDestinationsCommand}" CommandParameter="{Binding}"/>
+                                </WrapPanel>
                             </StackPanel>
-
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-            <Button Content="Delete" Classes="ActionBtn" 
-                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteWatchFolderCommand}" 
-                    CommandParameter="{Binding}"/>
-            <Button Content="Edit" Classes="ActionBtn" 
-                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).EditWatchFolderCommand}" 
-                    CommandParameter="{Binding}"/>
-            <Button Content="Destinations" Classes="DestBtn" 
-                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenDestinationsCommand}" 
-                    CommandParameter="{Binding}"/>
-        </StackPanel>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <StackPanel Grid.Row="2" Spacing="10" Margin="0,15,0,0">
-            <TextBlock Text="{Binding StatusText}" Foreground="#C1E1FF" FontSize="13" TextWrapping="Wrap"/>
-            <StackPanel Orientation="Horizontal" Spacing="8">
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Text="{Binding StatusText}" Foreground="{DynamicResource AccentText}"/>
+            <WrapPanel>
                 <Button Content="Preview moves" Classes="ActionBtn" Command="{Binding PreviewCommand}"/>
                 <Button Content="{Binding MonitoringButtonText}" Classes="DestBtn" Command="{Binding ToggleMonitoringCommand}"/>
                 <Button Content="Undo last move" Classes="ActionBtn" Command="{Binding UndoLastCommand}"/>
                 <Button Content="Scan now" Classes="ActionBtn" Command="{Binding ForceScanCommand}"/>
-            </StackPanel>
-            <Border Background="#193651" BorderBrush="#3E6182" BorderThickness="1" CornerRadius="14" Padding="12">
-                <StackPanel Spacing="6">
-                    <TextBlock Text="Proposed moves · read-only" Foreground="#C1E1FF" FontWeight="SemiBold"/>
-                    <ScrollViewer MaxHeight="105">
-                        <TextBlock Text="{Binding PreviewText}" Foreground="#F2F7FC" FontSize="12" TextWrapping="Wrap"/>
-                    </ScrollViewer>
+            </WrapPanel>
+            <Border Background="{DynamicResource CardSurface}" BorderBrush="{DynamicResource ControlBoundary}" BorderThickness="1" CornerRadius="14" Padding="16">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Proposed moves · read-only" Foreground="{DynamicResource AccentText}" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding PreviewText}" FontSize="{DynamicResource CaptionFontSize}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource CardSurface}" BorderBrush="{DynamicResource ControlBoundary}" BorderThickness="1" CornerRadius="14" Padding="16">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Recent operations" Foreground="{DynamicResource AccentText}" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding RecentMoveText}" FontSize="{DynamicResource CaptionFontSize}"/>
                 </StackPanel>
             </Border>
         </StackPanel>
-        <Border Grid.Row="3" Background="#193651" BorderBrush="#3E6182" BorderThickness="1" CornerRadius="14" Padding="12" Margin="0,10,0,0">
-            <StackPanel Spacing="6">
-                <TextBlock Text="Recent operations" Foreground="#C1E1FF" FontWeight="SemiBold"/>
-                <ScrollViewer MaxHeight="125">
-                    <TextBlock Text="{Binding RecentMoveText}" Foreground="#F2F7FC" FontSize="12" TextWrapping="Wrap"/>
-                </ScrollViewer>
-            </StackPanel>
-        </Border>
-    </Grid>
+    </ScrollViewer>
 </Window>

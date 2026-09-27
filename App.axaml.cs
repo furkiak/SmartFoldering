@@ -30,6 +30,7 @@ namespace SmartFoldering
         {
         
             _globalSettings = new SettingsManager();
+            AppearanceService.Apply(GlobalSettings.GetCommittedSettings());
             _engine = new FileOrganizerEngine(GlobalSettings);
             GlobalSettings.RulesChanging += () => Engine.Stop();
             _dialogService = new DialogService();

@@ -51,6 +51,12 @@ namespace SmartFoldering
             this.Close();
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            if (!App.IsShuttingDown) _parentWindow?.Show();
+        }
+
         private async void AddRule_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new RuleDialogWindow();

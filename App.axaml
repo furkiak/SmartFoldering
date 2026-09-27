@@ -2,8 +2,164 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SmartFoldering.App"
              RequestedThemeVariant="Dark"> 
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="WindowSurface">#F4F7FC</SolidColorBrush>
+                    <SolidColorBrush x:Key="CardSurface">#FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="SoftSurface">#E7EFF7</SolidColorBrush>
+                    <SolidColorBrush x:Key="HoverSurface">#D2E0EF</SolidColorBrush>
+                    <SolidColorBrush x:Key="PrimaryText">#102849</SolidColorBrush>
+                    <SolidColorBrush x:Key="SecondaryText">#40546A</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentText">#174C84</SolidColorBrush>
+                    <SolidColorBrush x:Key="ControlBoundary">#637B96</SolidColorBrush>
+                    <SolidColorBrush x:Key="FocusOutline">#174C84</SolidColorBrush>
+                    <SolidColorBrush x:Key="WarningText">#8A4824</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="WindowSurface">#101C2A</SolidColorBrush>
+                    <SolidColorBrush x:Key="CardSurface">#182B40</SolidColorBrush>
+                    <SolidColorBrush x:Key="SoftSurface">#223E59</SolidColorBrush>
+                    <SolidColorBrush x:Key="HoverSurface">#2B4C6A</SolidColorBrush>
+                    <SolidColorBrush x:Key="PrimaryText">#F2F7FC</SolidColorBrush>
+                    <SolidColorBrush x:Key="SecondaryText">#BED0E2</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentText">#A6D2FF</SolidColorBrush>
+                    <SolidColorBrush x:Key="ControlBoundary">#88A5C1</SolidColorBrush>
+                    <SolidColorBrush x:Key="FocusOutline">#C4E3FF</SolidColorBrush>
+                    <SolidColorBrush x:Key="WarningText">#FFC49C</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <x:Double x:Key="BodyFontSize">14</x:Double>
+            <x:Double x:Key="CaptionFontSize">12</x:Double>
+            <x:Double x:Key="SectionFontSize">17</x:Double>
+            <x:Double x:Key="HeadingFontSize">22</x:Double>
+            <x:Double x:Key="TitleFontSize">26</x:Double>
+        </ResourceDictionary>
+    </Application.Resources>
     <Application.Styles>
         <FluentTheme />
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource WindowSurface}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+            <Setter Property="FontFamily" Value="Segoe UI, Arial, sans-serif"/>
+            <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}"/>
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="Button, TextBox, ComboBox, ComboBoxItem, CheckBox, RadioButton">
+            <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        </Style>
+        <Style Selector="Button, TextBox, ComboBox">
+            <Setter Property="Background" Value="{DynamicResource CardSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBoundary}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+        <Style Selector="Button.ActionBtn, Button.DestBtn, Button.IconBtn">
+            <Setter Property="Margin" Value="0,0,8,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.DestBtn">
+            <Setter Property="Background" Value="{DynamicResource SoftSurface}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentText}"/>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter, Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource HoverSurface}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBoundary}"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="CaretBrush" Value="{DynamicResource PrimaryText}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="TextBox /template/ TextBlock#PART_Watermark, TextBox:pointerover /template/ TextBlock#PART_Watermark, TextBox:focus /template/ TextBlock#PART_Watermark">
+            <Setter Property="Opacity" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+            <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}"/>
+        </Style>
+        <Style Selector="TextBox:pointerover, TextBox:focus">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        </Style>
+        <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="{DynamicResource CardSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBoundary}"/>
+        </Style>
+        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="{DynamicResource CardSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource FocusOutline}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style Selector="ComboBox /template/ Border#PopupBorder">
+            <Setter Property="Background" Value="{DynamicResource CardSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBoundary}"/>
+        </Style>
+        <Style Selector="ComboBox:pointerover /template/ Border#Background, ComboBox:pressed /template/ Border#Background">
+            <Setter Property="Background" Value="{DynamicResource HoverSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBoundary}"/>
+        </Style>
+        <Style Selector="ComboBox:focus-visible /template/ Border#HighlightBackground">
+            <Setter Property="Background" Value="{DynamicResource CardSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource FocusOutline}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style Selector="ComboBox:focus-visible /template/ ContentControl#ContentPresenter, ComboBox:focused:pressed /template/ ContentControl#ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        </Style>
+        <Style Selector="ComboBox /template/ PathIcon#DropDownGlyph, ComboBox:focus-visible /template/ PathIcon#DropDownGlyph, ComboBox:focused:pressed /template/ PathIcon#DropDownGlyph">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        </Style>
+        <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter, ComboBoxItem:selected /template/ ContentPresenter, ComboBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource HoverSurface}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        </Style>
+        <Style Selector="CheckBox /template/ Border#NormalRectangle, CheckBox:pointerover /template/ Border#NormalRectangle, CheckBox:pressed /template/ Border#NormalRectangle, CheckBox:checked /template/ Border#NormalRectangle, CheckBox:checked:pointerover /template/ Border#NormalRectangle, CheckBox:checked:pressed /template/ Border#NormalRectangle">
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBoundary}"/>
+            <Setter Property="Background" Value="{DynamicResource CardSurface}"/>
+        </Style>
+        <Style Selector="CheckBox:checked /template/ Path#CheckGlyph, CheckBox:checked:pointerover /template/ Path#CheckGlyph, CheckBox:checked:pressed /template/ Path#CheckGlyph">
+            <Setter Property="Fill" Value="{DynamicResource AccentText}"/>
+        </Style>
+        <Style Selector="CheckBox:pointerover /template/ ContentPresenter, CheckBox:pressed /template/ ContentPresenter, CheckBox:checked /template/ ContentPresenter, CheckBox:checked:pointerover /template/ ContentPresenter, CheckBox:checked:pressed /template/ ContentPresenter, RadioButton:pointerover /template/ ContentPresenter, RadioButton:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        </Style>
+        <Style Selector="RadioButton /template/ Ellipse#OuterEllipse, RadioButton:pointerover /template/ Ellipse#OuterEllipse, RadioButton:pressed /template/ Ellipse#OuterEllipse, RadioButton /template/ Ellipse#CheckOuterEllipse, RadioButton:pointerover /template/ Ellipse#CheckOuterEllipse, RadioButton:pressed /template/ Ellipse#CheckOuterEllipse">
+            <Setter Property="Stroke" Value="{DynamicResource ControlBoundary}"/>
+            <Setter Property="Fill" Value="{DynamicResource CardSurface}"/>
+        </Style>
+        <Style Selector="RadioButton /template/ Ellipse#CheckGlyph, RadioButton:pointerover /template/ Ellipse#CheckGlyph, RadioButton:pressed /template/ Ellipse#CheckGlyph">
+            <Setter Property="Fill" Value="{DynamicResource AccentText}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AccentText}"/>
+        </Style>
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter, ListBoxItem:pointerover /template/ ContentPresenter, ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SoftSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource FocusOutline}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style Selector="Control">
+            <Setter Property="Transitions"><Transitions/></Setter>
+            <Setter Property="FocusAdorner">
+                <ControlTemplate>
+                    <Border BorderBrush="{DynamicResource FocusOutline}" BorderThickness="2" CornerRadius="9" Margin="-3" IsHitTestVisible="False"/>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button:pressed">
+            <Setter Property="RenderTransform" Value="none"/>
+        </Style>
     </Application.Styles>
 
     <TrayIcon.Icons>

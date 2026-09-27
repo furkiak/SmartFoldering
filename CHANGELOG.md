@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Local candidate 0.3.0-preview.1
+
+- Add Light/Dark and 100/150/200% actual font-size preferences with visible profile settings and atomic persistence; retain legacy Dark/100 defaults.
+- Keep appearance-only saves separate from preview approval, committed/pending rule edits, monitoring and RulesChanging events. Preserve unsupported appearance data and unknown top-level fields.
+- Use opaque palette surfaces, stronger control boundaries and explicit keyboard focus; disable decorative transitions. Reflow actions, wrap paths and use resizable scrollable windows with standard frames.
+- Write the normal Windows startup entry only when its checkbox changes; keep separate profiles isolated and report partial appearance/startup save failures explicitly.
+- Pass all 40 behavior tests with real Windows kernel overflow/ACL/ReadOnly cases; detect invalid-preference and preview-revision mutations. New appearance native acceptance remains pending; old screenshots show the earlier layout.
+
 - Retain an overflow rescan requested while another full scan is active; keep queued requests coalesced without losing events that arrive after the active file-list snapshot.
 - Verify actual Windows kernel watcher overflow with the production 64 KiB buffer, lost notification recovery, unchanged file hashes and one journal result per file.
 - Add opt-in owned-fixture Windows ACL and read-only replacement-denial tests; preserve settings/backup/committed state and restore permissions before cleanup.

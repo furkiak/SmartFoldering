@@ -46,6 +46,7 @@ public sealed class SettingsManager : ISettingsManager
         await _writeGate.WaitAsync();
         try
         {
+            ValidateAppearance(_currentSettings.AppearanceTheme, _currentSettings.TextScalePercent);
             var rulesChanged = JsonSerializer.Serialize(_currentSettings.WatchFolders) !=
                                JsonSerializer.Serialize(_committedSettings.WatchFolders);
             if (rulesChanged)
@@ -54,21 +55,7 @@ public sealed class SettingsManager : ISettingsManager
                 _currentSettings.MonitoringEnabled = false;
             }
             MovePlanner.Validate(_currentSettings);
-            var json = JsonSerializer.Serialize(_currentSettings, JsonOptions);
-            var path = _settingsFilePath;
-            var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
-            try
-            {
-                await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-                {
-                    var bytes = System.Text.Encoding.UTF8.GetBytes(json);
-                    await stream.WriteAsync(bytes);
-                    stream.Flush(flushToDisk: true);
-                }
-                if (File.Exists(path)) File.Replace(temporary, path, path + ".bak");
-                else File.Move(temporary, path);
-            }
-            finally { if (File.Exists(temporary)) File.Delete(temporary); }
+            await PersistAsync(_currentSettings);
             _committedSettings = Clone(_currentSettings);
             Interlocked.Increment(ref _revision);
         }
@@ -78,6 +65,49 @@ public sealed class SettingsManager : ISettingsManager
             throw;
         }
         finally { _writeGate.Release(); }
+    }
+
+    public async Task SaveAppearanceAsync(string theme, int textScalePercent)
+    {
+        ValidateAppearance(theme, textScalePercent);
+        await _writeGate.WaitAsync();
+        try
+        {
+            var candidate = Clone(_committedSettings);
+            candidate.AppearanceTheme = theme;
+            candidate.TextScalePercent = textScalePercent;
+            await PersistAsync(candidate);
+            _committedSettings = candidate;
+            _currentSettings.AppearanceTheme = theme;
+            _currentSettings.TextScalePercent = textScalePercent;
+        }
+        finally { _writeGate.Release(); }
+    }
+
+    public static void ValidateAppearance(string theme, int textScalePercent)
+    {
+        if (theme is not ("Light" or "Dark") || textScalePercent is not (100 or 150 or 200))
+            throw new ArgumentException("Appearance must be Light or Dark with 100%, 150% or 200% text size.");
+    }
+
+    private async Task PersistAsync(AppSettings settings)
+    {
+        // Refuse incompatible external edits before replacing either original or backup.
+        if (File.Exists(_settingsFilePath)) _ = Read(_settingsFilePath);
+        if (File.Exists(_settingsFilePath + ".bak")) _ = Read(_settingsFilePath + ".bak");
+        var json = JsonSerializer.Serialize(settings, JsonOptions);
+        var temporary = _settingsFilePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                await stream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(json));
+                stream.Flush(flushToDisk: true);
+            }
+            if (File.Exists(_settingsFilePath)) File.Replace(temporary, _settingsFilePath, _settingsFilePath + ".bak");
+            else File.Move(temporary, _settingsFilePath);
+        }
+        finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 
     public bool CanAddRuleToTarget(string watchFolderId, RuleType type, string value)
@@ -111,9 +141,39 @@ public sealed class SettingsManager : ISettingsManager
         }
     }
 
-    private static AppSettings Read(string path) =>
-        JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(path)) ??
-        throw new JsonException("Settings must contain an object.");
+    private static AppSettings Read(string path)
+    {
+        var json = File.ReadAllText(path);
+        using var document = JsonDocument.Parse(json);
+        if (document.RootElement.ValueKind != JsonValueKind.Object)
+            throw new JsonException("Settings must contain an object.");
+        var theme = "Dark";
+        var scale = 100;
+        var seenTheme = false;
+        var seenScale = false;
+        foreach (var property in document.RootElement.EnumerateObject())
+        {
+            if (property.Name == nameof(AppSettings.AppearanceTheme))
+            {
+                if (seenTheme || property.Value.ValueKind != JsonValueKind.String)
+                    throw new InvalidDataException("Unsupported appearance data; original settings were preserved.");
+                seenTheme = true;
+                theme = property.Value.GetString()!;
+            }
+            if (property.Name == nameof(AppSettings.TextScalePercent))
+            {
+                if (seenScale || property.Value.ValueKind != JsonValueKind.Number || !property.Value.TryGetInt32(out scale))
+                    throw new InvalidDataException("Unsupported text size data; original settings were preserved.");
+                seenScale = true;
+            }
+        }
+        try { ValidateAppearance(theme, scale); }
+        catch (ArgumentException ex)
+        {
+            throw new InvalidDataException("Unsupported appearance preference; original settings were preserved. Use a compatible version or explicitly restore your backup.", ex);
+        }
+        return JsonSerializer.Deserialize<AppSettings>(json) ?? throw new JsonException("Settings must contain an object.");
+    }
 
     private static AppSettings Clone(AppSettings settings) =>
         JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(settings))!;

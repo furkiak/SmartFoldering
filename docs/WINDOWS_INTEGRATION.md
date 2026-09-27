@@ -1,13 +1,13 @@
 # Windows watcher and permission integration
 
-The suite has 19 ordinary behavior tests and three opt-in Windows integration tests. Choose an absolute disposable workspace folder explicitly; do not select your normal profile, Downloads or an existing folder of personal files.
+The suite has 37 ordinary behavior tests and three opt-in Windows integration tests, including the appearance-persistence candidate. Choose an absolute disposable workspace folder explicitly; do not select your normal profile, Downloads or an existing folder of personal files.
 
 ```powershell
 $env:SMARTFOLDERING_WINDOWS_TEST_ROOT = Join-Path (Get-Location) 'TestResults\windows-fixtures'
 dotnet test SmartFoldering.Tests/SmartFoldering.Tests.csproj -c Release --logger 'trx;LogFileName=windows-integration.trx' --results-directory TestResults
 ```
 
-Without the variable, or outside Windows, the three integration tests are skipped rather than reported as verified. In the local Windows run all 22 passed with no skips. Each integration case creates a unique child with an ownership marker under the chosen root. ACL changes affect only that child's settings directory. The test restores its original access rules and inheritance protection in `finally`, verifies ownership did not change, then proves saving works again. Cleanup refuses a path outside the owned fixture. No normal user directory, registry value or personal settings file is changed.
+Without the variable, or outside Windows, the three integration tests are skipped rather than reported as verified. The local appearance-candidate run passed all 40 with no skips; the earlier 22-case record is retained. Each integration case creates a unique child with an ownership marker under the chosen root. ACL changes affect only that child's settings directory. The test restores its original access rules and inheritance protection in `finally`, verifies ownership did not change, then proves saving works again. Cleanup refuses a path outside the owned fixture. No normal user directory, registry value or personal settings file is changed.
 
 ## Real kernel overflow
 

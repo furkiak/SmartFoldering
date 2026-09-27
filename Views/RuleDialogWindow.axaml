@@ -1,36 +1,24 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="SmartFoldering.RuleDialogWindow"
-        Width="400" SizeToContent="Height"
-        Background="#18181A"
-        SystemDecorations="None"
-        WindowStartupLocation="CenterOwner">
-
-    <Border Padding="25" PointerPressed="Window_PointerPressed" CornerRadius="12" BorderBrush="#2C2C2E" BorderThickness="1">
-        <StackPanel Spacing="20">
-            <TextBlock Text="Filter Details" FontSize="18" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,5"/>
-
-            <StackPanel Spacing="8">
-                <TextBlock Text="Rule Type" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold"/>
-                <StackPanel Orientation="Horizontal" Spacing="25" Margin="0,5,0,5">
-                    <RadioButton x:Name="ExtensionRadio" Content="Extension (.pdf)" IsChecked="True" Foreground="#F2F2F7"/>
-                    <RadioButton x:Name="KeywordRadio" Content="Keyword (Text)" Foreground="#F2F2F7"/>
-                </StackPanel>
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SmartFoldering.RuleDialogWindow" Title="Filter details"
+        Width="480" Height="580" MinWidth="360" MinHeight="300" SystemDecorations="Full"
+        WindowStartupLocation="CenterOwner" CanResize="True">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24" Spacing="18">
+            <TextBlock Text="Filter details" FontSize="{DynamicResource HeadingFontSize}" FontWeight="Bold"/>
+            <TextBlock Text="Rule type" Foreground="{DynamicResource SecondaryText}"/>
+            <StackPanel Spacing="10">
+                <RadioButton x:Name="ExtensionRadio" Content="Extension (.pdf)" IsChecked="True"/>
+                <RadioButton x:Name="KeywordRadio" Content="Keyword (text)"/>
             </StackPanel>
-
-            <StackPanel Spacing="8">
-                <TextBlock Text="Value" Foreground="#8E8E93" FontSize="12" FontWeight="SemiBold"/>
-                <TextBox x:Name="ValueTextBox" Background="#1C1C1E" Foreground="#F2F2F7" BorderBrush="#3A3A3C" Padding="12" CornerRadius="6" Watermark="e.g. .jpg or invoice"/>
-            </StackPanel>
-            
-            <Border x:Name="ErrorBox" Background="#2A1A1A" BorderBrush="#4A2A2A" BorderThickness="1" CornerRadius="6" Padding="10" IsVisible="False" Margin="0,5,0,0">
-                <TextBlock Foreground="#FF6B6B" FontSize="12" Text="Conflict! This rule already exists in another folder." TextWrapping="Wrap"/>
+            <TextBlock Text="Value" Foreground="{DynamicResource SecondaryText}"/>
+            <TextBox x:Name="ValueTextBox" Watermark="e.g. .jpg or invoice" AutomationProperties.Name="Filter value"/>
+            <Border x:Name="ErrorBox" Background="{DynamicResource CardSurface}" BorderBrush="{DynamicResource ControlBoundary}" BorderThickness="1" CornerRadius="8" Padding="12" IsVisible="False">
+                <TextBlock Foreground="{DynamicResource WarningText}" Text="Conflict: this rule already exists in another folder."/>
             </Border>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,15,0,0">
-                <Button Content="Cancel" Width="90" Padding="10" Background="Transparent" Foreground="#8E8E93" Click="Cancel_Click" HorizontalContentAlignment="Center"/>
-                <Button Content="Save" Width="90" Padding="10" Background="#48484A" Foreground="#FFFFFF" FontWeight="Bold" CornerRadius="6" Click="Save_Click" HorizontalContentAlignment="Center"/>
-            </StackPanel>
+            <WrapPanel Margin="0,12,0,0">
+                <Button Content="Cancel" Classes="ActionBtn" Click="Cancel_Click"/>
+                <Button Content="Save" Classes="DestBtn" Click="Save_Click"/>
+            </WrapPanel>
         </StackPanel>
-    </Border>
+    </ScrollViewer>
 </Window>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SmartFoldering.Models
 {
@@ -35,5 +37,9 @@ namespace SmartFoldering.Models
     {
         public List<WatchFolder> WatchFolders { get; set; } = new List<WatchFolder>();
         public bool MonitoringEnabled { get; set; }
+        public string AppearanceTheme { get; set; } = "Dark";
+        public int TextScalePercent { get; set; } = 100;
+        [JsonExtensionData]
+        public Dictionary<string, JsonElement>? AdditionalSettings { get; set; }
     }
 }

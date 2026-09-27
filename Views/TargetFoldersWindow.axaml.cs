@@ -120,6 +120,11 @@ namespace SmartFoldering
             _parentWindow?.Show();
             this.Close();  
         } 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            if (!App.IsShuttingDown) _parentWindow?.Show();
+        }
         private void OpenRules_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.CommandParameter is TargetFolder target)

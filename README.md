@@ -4,11 +4,13 @@
 
 ![SmartFoldering workflow diagram, not a screenshot](docs/workflow.svg)
 
-> Preview source revision: 22 tests pass in the opt-in Windows run, including a real 64 MiB file, rename, guarded undo, production-buffer kernel overflow recovery, ACL access denial and read-only settings protection. A separate native profile completed Preview → Start → Pause → Undo twice, preserving a destination collision and the nonmatching file. A second instance was rejected cleanly. Windows sign-in startup, another Windows account and clean-machine installation remain unverified. The diagram is a workflow explanation.
+> Local appearance candidate 0.3.0-preview.1: **40 tests pass, zero skipped** in the opt-in Windows run, retaining real file/watcher/permission checks and adding atomic appearance persistence. **Settings** now offers Light/Dark and real 100%/150%/200% font size. The new layout's native keyboard/200% acceptance is pending. Earlier native Preview → Start → Pause → Undo and second-instance evidence remains valid for the prior layout. Windows sign-in startup, another account and clean-machine installation remain unverified. The diagram explains the workflow.
 
-![Windows 11 native preview of a disposable fixture, 27 September 2026](docs/windows-preview-2026-09-27.png)
+![Earlier Windows 11 native preview before appearance controls, 27 September 2026](docs/windows-preview-2026-09-27.png)
 
 The native check used disposable local files. The normal profile's settings and Windows startup entry stayed unchanged. File hashes and the durable `intent → moved → undone` journal were checked after each cycle. **Quit** stops the worker and closes the app; **Hide window** keeps it available in the tray.
+
+Choose **Settings → Theme / Text size**, then Save. Opaque surfaces, wrapping actions, scrollable/resizable windows and explicit keyboard focus support larger text. Appearance-only Save keeps monitoring and preview approval unchanged, and leaves Windows startup untouched unless its checkbox was changed. This uses text fonts, not Windows DPI or native blur. See [appearance, contrast calculation and native acceptance steps](docs/APPEARANCE.md).
 
 ## Quick start on Windows
 
@@ -63,5 +65,7 @@ Operation history can expose file names and paths. It is local to the OS user pr
 The code uses cross-platform APIs in several places, but macOS and Linux builds, packaging, permissions, watcher behavior and UX have **not** been verified. Windows is the intended first release target. The source currently targets .NET 9; moving to a later runtime is a separate compatibility task. See [support gates](docs/SUPPORT.md), [changelog](CHANGELOG.md), [contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md). Licensed under [MIT](LICENSE).
 
 ## Türkçe
+
+Yeni yerel **0.3.0-preview.1** adayında Settings üzerinden açık/koyu tema ve gerçek %100/%150/%200 yazı boyutu kaydedilir. Görünüm değişimi preview onayını ve çalışan izlemeyi korur; normal startup kaydı checkbox değişmedikçe yazılmaz. Kontroller sarılır, pencereler kaydırılıp boyutlandırılır ve yüzeyler opaktır. **40 test, sıfır atlama** geçti; yeni yerleşimin native %200/klavye kabulü henüz yapılmadı. Aşağıdaki eski 22 testlik ve native kayıtlar önceki sürümün tarihli kanıtıdır. [Görünüm ve kabul adımları](docs/APPEARANCE.md).
 
 SmartFoldering, kurallara göre yerel dosyaları taşımadan önce **önizleme** gösteren C# / Avalonia uygulamasıdır. Yeni sürümde izleme varsayılan olarak kapalıdır. Kaynak, hedef ve kuralı ekledikten sonra **Preview moves** ile yolları incele; **Start monitoring** ile başlat. Kaynak/hedef iç içe olursa önizleme açıklayıcı hata verir ve izleme başlamaz. Kurallar değişince izleme durur. **Undo last move** yalnızca izleme duraklatıldığında, kaynak yol boşsa ve hedef dosya taşınan dosyayla aynı SHA-256 değerindeyse çalışır. Windows 11'de ayrı geçici profilde iki gerçek taşıma/geri alma döngüsü, çakışan hedefi koruma ve ikinci örneğin temiz kapanması doğrulandı; kişisel ayarlar değişmedi. Açıkça seçilen geçici kökte Windows entegrasyonu dahil 22 test geçti: gerçek 64 KiB watcher taşmasında kaybolan bildirimler tam taramayla kurtarıldı; ACL ve read-only kayıt reddinde son sağlam JSON/yedek/ayarlar korundu. Üç entegrasyon testi kök belirtilmezse atlanır. **Quit** izlemeyi durdurup uygulamayı kapatır; **Hide window** tepside çalışmayı sürdürür. Native kayıt hatasında açıklayıcı erişim engeli mesajı göründü, izleme başlamadı ve hiçbir dosya taşınmadı. Başka hesap ve temiz makine kurulumu ayrı kontrollerdir.
