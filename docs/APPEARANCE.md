@@ -24,7 +24,7 @@ The application supplies a two-unit keyboard focus outline and explicit textbox/
 - Unsupported or duplicate appearance fields are rejected without automatically replacing the current file with an older backup. Both original files are checked before a save, and incompatible external main/backup edits block replacement. Existing malformed-JSON backup recovery remains available during startup. Unknown **top-level** JSON fields are preserved; this is not a promise to understand every future nested schema. Restore an incompatible/damaged backup explicitly after preserving a copy; do not delete personal data to make Save succeed.
 - The local suite has **40 passing tests, zero skipped**, including the previous 22 cases and three actual Windows integration tests. New behavior checks cover legacy upgrade/restart/byte-exact backup, unknown top-level data, pending UI objects, failed writes, unsupported preferences and concurrent saves. A production watcher remains active after two appearance saves and moves a later real file. Mutations that accept invalid preferences or alter the preview revision fail the relevant tests; the restored source passes again. See [Windows integration](WINDOWS_INTEGRATION.md) for real overflow/ACL/ReadOnly scope.
 
-## Native acceptance still required for this layout
+## Reproducible native checks
 
 Use the new package with an **absolute disposable** `--data-directory`, never the normal profile. Preserve earlier packages and any fixture baseline.
 
@@ -34,8 +34,24 @@ Use the new package with an **absolute disposable** `--data-directory`, never th
 4. Save Light / 100%, Quit, relaunch the same disposable profile and verify the persisted choice. If monitoring was left enabled, the existing resume-to-tray behavior applies; pause before exit when a visible startup is needed. Check normal profile JSON and startup registry baselines remain unchanged.
 5. In an owned ReadOnly-settings fixture, try appearance Save; confirm persistent feedback, unchanged main/backup hashes and unchanged rendered preference. Exit and restore the original attribute before cleanup. This native UI failure case is separate from the automated real-permission tests.
 
-Native 200% layout, dropdown/focus visibility, screen-reader reading order and tray reopening are **pending** for this candidate. Earlier native screenshots and move/undo evidence describe the prior layout and remain historical evidence, not proof of the new appearance controls. No remote publication, normal startup change, OS display/theme setting change or personal-profile migration was performed.
+## Native Windows observations, 27 September 2026
+
+The candidate was exercised on Windows 11 with an absolute disposable profile and owned synthetic source/target folders. Legacy settings opened Dark/100%. A read-only Preview proposed exactly one PDF move. Saving Light/200% preserved that approval: Start monitoring succeeded without another Preview and moved the file byte-exact. Saving Dark/200% and then Dark/150% while monitoring left the watcher active; a later PDF moved exactly once. Pause and native Undo restored that second file with its original SHA-256 and one `undone` journal record. A nonmatching text file remained unchanged, and an unknown top-level setting survived every successful save.
+
+Main at 380px and Settings/folder/destination/filter windows at 360px were inspected with 200% fonts. Actions wrap, long paths and names wrap, and keyboard focus scrolls bottom actions into view. The main title originally split across lines at 200%; the revised 22/33/44-unit heading keeps the full name at minimum width. Theme/font dropdown values and native focus outlines were readable. Folder and filter forms were cancelled; persisted rules and backup digests stayed unchanged.
+
+Native inspection also found that the Fluent textbox watermark remained half opaque despite a style opacity setter. The pinned template sets `Opacity="0.5"` locally. `AccessibleTextBox` retains the normal TextBox style/behavior and sets the applied watermark's opacity to 1; the corrected empty native folder form was then inspected at Dark/200%. Source palette calculations above describe this corrected opacity, not the earlier translucent placeholder.
+
+An owned ReadOnly `settings.json` caused native Save to fail with persistent, readable feedback. The main and backup digests and Dark/200% preferences stayed unchanged; pending Light/100% did not apply. After the original attribute was restored, retry succeeded, saved Light/100%, and preserved the previous main bytes as the backup. Saving disables/re-enables Save; the failure path restores its focus so the feedback and retry actions scroll into view. Dark/150% persistence was verified after exit/relaunch. Sampled normal settings/backups and Windows Run-entry digests matched the before/after checkpoint.
+
+![Minimum-width dark main window with 200% fonts](images/appearance-dark-200-minimum.png)
+
+![Native corrected opaque watermark](images/appearance-dark-200-placeholder.png)
+
+![Persistent native ReadOnly error before retry](images/appearance-readonly-error.png)
+
+No remote publication, normal startup change, OS display/theme preference change or personal-profile migration was performed. Full cross-theme interaction coverage, screen-reader output, alternate DPI, physical tray reopening, another OS user and clean-machine installation remain open. Source ratios and screenshots do not certify WCAG conformance. Earlier native screenshots remain historical evidence for their dated layout.
 
 ## Türkçe
 
-**Settings → Theme / Text size** ile açık/koyu tema ve gerçek %100/%150/%200 yazı boyutu seçilir; Save yalnız seçili profilin JSON dosyasını atomik kaydeder. Eski ayarlar Dark/%100 açılır. Görünüm kaydı preview onayını bozmaz, kuralları kaydetmez ve çalışan izlemeyi durdurmaz. Kontroller sarılır, içerik kaydırılır; yüzeyler opaktır, native blur yoktur. Kaynak renk kontrastları ve 40 davranış testi doğrulandı; yeni görünümün Windows native %200/klavye kabulü henüz tamamlanmadı. Eski ekran görüntüleri önceki yerleşime aittir. Normal startup kaydı sadece checkbox gerçekten değişirse yazılır; ayrı profil bunu değiştiremez.
+**Settings → Theme / Text size** ile açık/koyu tema ve gerçek %100/%150/%200 yazı boyutu seçilir; Save yalnız seçili profilin JSON dosyasını atomik kaydeder. Eski ayarlar Dark/%100 açılır. Görünüm kaydı preview onayını bozmaz, kuralları kaydetmez ve çalışan izlemeyi durdurmaz. Kontroller sarılır, içerik kaydırılır; yüzeyler opaktır, native blur yoktur. Kaynak renk kontrastları ve 40 davranış testi doğrulandı. Ayrı Windows profilinde %200 dar pencere/klavye, görünüm kaydında preview ve izleme korunması, dosya hashleri, geri alma ve ReadOnly hata/tekrar deneme kontrol edildi. Farklı DPI, ekran okuyucu ve tam tema matrisi açıktır. Eski ekran görüntüleri önceki yerleşime aittir. Normal startup kaydı sadece checkbox gerçekten değişirse yazılır; ayrı profil bunu değiştiremez.

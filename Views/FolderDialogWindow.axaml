@@ -1,4 +1,4 @@
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="using:SmartFoldering.Controls"
         x:Class="SmartFoldering.FolderDialogWindow" Title="Folder details"
         Width="480" Height="500" MinWidth="360" MinHeight="300" SystemDecorations="Full"
         WindowStartupLocation="CenterOwner" CanResize="True">
@@ -6,9 +6,9 @@
         <StackPanel Margin="24" Spacing="18">
             <TextBlock Text="Folder details" FontSize="{DynamicResource HeadingFontSize}" FontWeight="Bold"/>
             <TextBlock Text="Folder name" Foreground="{DynamicResource SecondaryText}"/>
-            <TextBox x:Name="NameTextBox" Watermark="e.g. Downloads" AutomationProperties.Name="Folder name"/>
+            <controls:AccessibleTextBox x:Name="NameTextBox" Watermark="e.g. Downloads" AutomationProperties.Name="Folder name"/>
             <TextBlock Text="Folder path" Foreground="{DynamicResource SecondaryText}"/>
-            <TextBox x:Name="PathTextBox" IsReadOnly="True" AutomationProperties.Name="Folder path"/>
+            <controls:AccessibleTextBox x:Name="PathTextBox" IsReadOnly="True" AutomationProperties.Name="Folder path"/>
             <Button Content="Browse folder" Click="BrowseFolder_Click" HorizontalAlignment="Left"/>
             <WrapPanel Margin="0,12,0,0">
                 <Button Content="Cancel" Classes="ActionBtn" Click="Cancel_Click"/>

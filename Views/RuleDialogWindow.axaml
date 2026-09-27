@@ -1,4 +1,4 @@
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="using:SmartFoldering.Controls"
         x:Class="SmartFoldering.RuleDialogWindow" Title="Filter details"
         Width="480" Height="580" MinWidth="360" MinHeight="300" SystemDecorations="Full"
         WindowStartupLocation="CenterOwner" CanResize="True">
@@ -11,7 +11,7 @@
                 <RadioButton x:Name="KeywordRadio" Content="Keyword (text)"/>
             </StackPanel>
             <TextBlock Text="Value" Foreground="{DynamicResource SecondaryText}"/>
-            <TextBox x:Name="ValueTextBox" Watermark="e.g. .jpg or invoice" AutomationProperties.Name="Filter value"/>
+            <controls:AccessibleTextBox x:Name="ValueTextBox" Watermark="e.g. .jpg or invoice" AutomationProperties.Name="Filter value"/>
             <Border x:Name="ErrorBox" Background="{DynamicResource CardSurface}" BorderBrush="{DynamicResource ControlBoundary}" BorderThickness="1" CornerRadius="8" Padding="12" IsVisible="False">
                 <TextBlock Foreground="{DynamicResource WarningText}" Text="Conflict: this rule already exists in another folder."/>
             </Border>

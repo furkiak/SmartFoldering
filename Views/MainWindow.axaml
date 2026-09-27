@@ -7,7 +7,7 @@
         SystemDecorations="Full" WindowStartupLocation="Manual" CanResize="True">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="24" Spacing="16">
-            <TextBlock Text="SmartFoldering" FontWeight="Bold" FontSize="{DynamicResource TitleFontSize}"/>
+            <TextBlock Text="SmartFoldering" FontWeight="Bold" FontSize="{DynamicResource HeadingFontSize}"/>
             <TextBlock Text="Review local file moves before enabling monitoring." Foreground="{DynamicResource SecondaryText}"/>
             <WrapPanel>
                 <Button Content="Settings" Classes="ActionBtn" Command="{Binding OpenSettingsCommand}" AutomationProperties.Name="Settings"/>

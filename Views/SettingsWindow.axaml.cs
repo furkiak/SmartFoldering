@@ -89,7 +89,11 @@ namespace SmartFoldering
                 FeedbackText.Text = (appearanceSaved ? "Appearance saved; Windows startup was not saved. " : "Settings not saved. ") + ex.Message;
                 FeedbackText.IsVisible = true;
             }
-            finally { SaveButton.IsEnabled = true; }
+            finally
+            {
+                SaveButton.IsEnabled = true;
+                if (FeedbackText.IsVisible) SaveButton.Focus();
+            }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

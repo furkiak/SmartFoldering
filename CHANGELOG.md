@@ -8,7 +8,8 @@
 - Keep appearance-only saves separate from preview approval, committed/pending rule edits, monitoring and RulesChanging events. Preserve unsupported appearance data and unknown top-level fields.
 - Use opaque palette surfaces, stronger control boundaries and explicit keyboard focus; disable decorative transitions. Reflow actions, wrap paths and use resizable scrollable windows with standard frames.
 - Write the normal Windows startup entry only when its checkbox changes; keep separate profiles isolated and report partial appearance/startup save failures explicitly.
-- Pass all 40 behavior tests with real Windows kernel overflow/ACL/ReadOnly cases; detect invalid-preference and preview-revision mutations. New appearance native acceptance remains pending; old screenshots show the earlier layout.
+- Pass all 40 behavior tests with real Windows kernel overflow/ACL/ReadOnly cases; detect invalid-preference and preview-revision mutations. Exercise native theme/font, preview approval, active watcher, exact-byte move/undo, keyboard scrolling and failed-write feedback in a disposable Windows profile.
+- Keep the app title whole at 380px with 200% fonts. Override the Fluent watermark's template-local half opacity in an otherwise standard TextBox; restore Save focus after a failed write so feedback and retry controls scroll into view.
 
 - Retain an overflow rescan requested while another full scan is active; keep queued requests coalesced without losing events that arrive after the active file-list snapshot.
 - Verify actual Windows kernel watcher overflow with the production 64 KiB buffer, lost notification recovery, unchanged file hashes and one journal result per file.
