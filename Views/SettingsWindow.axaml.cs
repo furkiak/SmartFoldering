@@ -92,7 +92,12 @@ namespace SmartFoldering
             finally
             {
                 SaveButton.IsEnabled = true;
-                if (FeedbackText.IsVisible) SaveButton.Focus();
+                if (FeedbackText.IsVisible)
+                {
+                    UpdateLayout();
+                    SaveButton.Focus(NavigationMethod.Tab);
+                    SaveButton.BringIntoView();
+                }
             }
         }
 
