@@ -1,0 +1,65 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartFoldering.ViewModels"
+        xmlns:loc="using:SmartFoldering.Localization"
+        xmlns:ctl="using:SmartFoldering.Views.Controls"
+        x:Class="SmartFoldering.Views.ToastWindow"
+        x:DataType="vm:ToastViewModel"
+        Title="SmartFoldering"
+        Width="392"
+        SizeToContent="Height"
+        CanResize="False"
+        SystemDecorations="None"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        Topmost="True"
+        ShowActivated="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="Manual">
+
+    <Window.Styles>
+        <Style Selector="Border#Root">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.35" Easing="CubicEaseOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border#Root.hidden">
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="RenderTransform" Value="translateX(24px)"/>
+        </Style>
+    </Window.Styles>
+
+    <Border x:Name="Root" Classes="windowRoot hidden" CornerRadius="26">
+        <Grid>
+            <ctl:AuroraBackground/>
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="16">
+                <Border Classes="chip large" Background="{Binding Look.Soft}" VerticalAlignment="Top">
+                    <Path Classes="glyph" Data="{Binding Look.Icon}" Fill="{Binding Look.Accent}" Width="18" Height="18"/>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="12,0,6,0" Spacing="10">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="{Binding Title}" Classes="h2" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Body}" Classes="cap" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanShow}">
+                        <Button Classes="accent" Command="{Binding UndoCommand}" IsVisible="{Binding CanUndo}" Padding="14,7">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Path Classes="glyph white" Data="{StaticResource IconUndo}" Width="13" Height="13"/>
+                                <TextBlock Text="{loc:T toast.undo}"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="glass" Command="{Binding ShowCommand}" Padding="14,7">
+                            <TextBlock Text="{loc:T toast.show}"/>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+                <Button Grid.Column="2" Classes="icon small" Command="{Binding DismissCommand}" VerticalAlignment="Top">
+                    <Path Classes="glyph" Data="{StaticResource IconClose}" Width="11" Height="11"/>
+                </Button>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

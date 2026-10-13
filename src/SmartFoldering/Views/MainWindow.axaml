@@ -1,0 +1,394 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartFoldering.ViewModels"
+        xmlns:loc="using:SmartFoldering.Localization"
+        xmlns:ctl="using:SmartFoldering.Views.Controls"
+        x:Class="SmartFoldering.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="SmartFoldering"
+        Width="1120" Height="740" MinWidth="980" MinHeight="600"
+        SystemDecorations="None"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/SmartFoldering.ico">
+
+    <Window.Styles>
+        <Style Selector="Border#Root">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.28" Easing="CubicEaseOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border#Root.hidden">
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+
+        <Style Selector="Border.activityRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="8,7"/>
+        </Style>
+        <Style Selector="Border.activityRow:pointerover">
+            <Setter Property="Background" Value="{DynamicResource GlassHoverBrush}"/>
+        </Style>
+        <Style Selector="Border.activityRow Button.reveal">
+            <Setter Property="Opacity" Value="0"/>
+        </Style>
+        <Style Selector="Border.activityRow:pointerover Button.reveal">
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+        <Style Selector="Border.activityRow.undone Border.chip, Border.activityRow.undone TextBlock">
+            <Setter Property="Opacity" Value="0.55"/>
+        </Style>
+    </Window.Styles>
+
+    <Border x:Name="Root" Classes="windowRoot">
+        <Grid>
+            <ctl:AuroraBackground/>
+
+            <Grid ColumnDefinitions="260,*,330">
+
+                <!-- ============ Sidebar: watched folders ============ -->
+                <Border Classes="sidebar" Padding="16,18,16,16">
+                    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,*" Background="Transparent" PointerPressed="OnDragAreaPressed">
+                            <Image Source="/Assets/SmartFoldering.png" Width="40" Height="40"
+                                   RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                            <StackPanel Grid.Column="1" Margin="11,0,0,0" VerticalAlignment="Center" Spacing="2">
+                                <TextBlock Text="SmartFoldering" Classes="h2" FontSize="15"/>
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Ellipse Classes="statusDot" Classes.on="{Binding IsActive}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding StatusText}" Classes="cap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Grid.Row="1" Text="{loc:T sidebar.folders}" Classes="section" Margin="6,26,0,8"/>
+
+                        <ListBox Grid.Row="2" x:Name="FolderList" Classes="sideList"
+                                 ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder, Mode=TwoWay}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="vm:WatchFolderItem">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <Border Classes="chip" Classes.accent="{Binding Enabled}" Classes.warning="{Binding !Exists}">
+                                            <Panel>
+                                                <Path Classes="glyph" Classes.accent="{Binding Enabled}" Data="{StaticResource IconFolder}"
+                                                      Width="14" Height="14" IsVisible="{Binding Exists}"/>
+                                                <Path Classes="glyph warning" Data="{StaticResource IconAlert}"
+                                                      Width="14" Height="14" IsVisible="{Binding !Exists}"/>
+                                            </Panel>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Subtitle}" Classes="micro" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <Button Grid.Row="3" x:Name="AddFolderButton" Classes="glass" HorizontalAlignment="Stretch" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Path Classes="glyph" Data="{StaticResource IconFolderPlus}" Width="15" Height="15"/>
+                                <TextBlock Text="{loc:T folder.add}"/>
+                            </StackPanel>
+                            <Button.Flyout>
+                                <MenuFlyout Placement="TopEdgeAlignedLeft">
+                                    <MenuItem Header="{loc:T folder.add.downloads}" Click="AddDownloads_Click">
+                                        <MenuItem.Icon>
+                                            <Path Classes="glyph accent" Data="{StaticResource IconDownload}" Width="14" Height="14"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{loc:T folder.add.templates}" Click="AddWithTemplates_Click">
+                                        <MenuItem.Icon>
+                                            <Path Classes="glyph" Data="{StaticResource IconMagic}" Width="14" Height="14"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{loc:T folder.add.empty}" Click="AddEmpty_Click">
+                                        <MenuItem.Icon>
+                                            <Path Classes="glyph" Data="{StaticResource IconFolder}" Width="14" Height="14"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+
+                        <Border Grid.Row="4" Classes="glass tile flat" Padding="16,14" Margin="0,12,0,0">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel>
+                                    <TextBlock Text="{loc:T stats.today}" Classes="cap"/>
+                                    <TextBlock Text="{Binding SortedToday}" Classes="hero num"/>
+                                    <TextBlock Text="{Binding WaitingText}" Classes="micro" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Classes="chip large success" VerticalAlignment="Top">
+                                    <Path Classes="glyph success" Data="{StaticResource IconCheck}" Width="18" Height="18"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- ============ Middle: the selected folder ============ -->
+                <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*" Margin="24,18,10,0">
+                    <Grid ColumnDefinitions="*,Auto" Background="Transparent" PointerPressed="OnDragAreaPressed" MinHeight="44"
+                          IsVisible="{Binding HasSelection}">
+                        <StackPanel VerticalAlignment="Center" Spacing="1" Margin="0,0,12,0">
+                            <TextBlock Text="{Binding SelectedName}" Classes="h1" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding SelectedDisplayPath}" Classes="cap" TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding SelectedPath}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Border Classes="glass flat" CornerRadius="14" Padding="12,2,4,2">
+                                <StackPanel Orientation="Horizontal" Spacing="2">
+                                    <TextBlock Text="{loc:T main.sorting}" FontWeight="SemiBold" FontSize="12.5" VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="SortingSwitch" IsChecked="{Binding SelectedEnabled, Mode=TwoWay}"
+                                                  IsEnabled="{Binding SelectedExists}" Margin="8,0,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Button Classes="glass" Click="Preview_Click">
+                                <StackPanel Orientation="Horizontal" Spacing="7">
+                                    <Path Classes="glyph" Data="{StaticResource IconEye}" Width="15" Height="15"/>
+                                    <TextBlock Text="{loc:T main.preview}"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="icon" ToolTip.Tip="{loc:T tip.more}">
+                                <Path Classes="glyph" Data="{StaticResource IconDots}"/>
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                        <MenuItem Header="{loc:T menu.open}" Command="{Binding OpenSelectedFolderCommand}">
+                                            <MenuItem.Icon>
+                                                <Path Classes="glyph" Data="{StaticResource IconOpen}" Width="14" Height="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{loc:T menu.scan}" Command="{Binding ScanNowCommand}">
+                                            <MenuItem.Icon>
+                                                <Path Classes="glyph" Data="{StaticResource IconRefresh}" Width="14" Height="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem Header="{loc:T menu.remove}">
+                                            <MenuItem.Icon>
+                                                <Path Classes="glyph danger" Data="{StaticResource IconDelete}" Width="14" Height="14"/>
+                                            </MenuItem.Icon>
+                                            <MenuItem Header="{loc:T menu.remove.confirm}" Command="{Binding RemoveSelectedFolderCommand}"/>
+                                        </MenuItem>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Spacing="8" Margin="0,12,12,0">
+                        <Border Classes="banner" IsVisible="{Binding HasProblem}">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Path Classes="glyph warning" Data="{StaticResource IconAlert}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding ProblemText}" TextWrapping="Wrap" Margin="10,0" VerticalAlignment="Center"/>
+                                <Button Grid.Column="2" Classes="icon small" Command="{Binding DismissProblemCommand}">
+                                    <Path Classes="glyph" Data="{StaticResource IconClose}" Width="11" Height="11"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                        <Border Classes="banner info" IsVisible="{Binding HasNotice}">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Path Classes="glyph accent" Data="{StaticResource IconAlert}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding NoticeText}" TextWrapping="Wrap" Margin="10,0" VerticalAlignment="Center"/>
+                                <Button Grid.Column="2" Classes="icon small" Command="{Binding DismissNoticeCommand}">
+                                    <Path Classes="glyph" Data="{StaticResource IconClose}" Width="11" Height="11"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                        <Border Classes="banner info" IsVisible="{Binding ShowOffBanner}">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Path Classes="glyph accent" Data="{StaticResource IconEye}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{loc:T banner.off}" TextWrapping="Wrap" Margin="10,0" VerticalAlignment="Center"/>
+                                <Button Grid.Column="2" Classes="accent" Padding="14,6" Click="Preview_Click">
+                                    <TextBlock Text="{loc:T main.preview}"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                        <Border Classes="banner" IsVisible="{Binding ShowMissingBanner}">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Path Classes="glyph warning" Data="{StaticResource IconAlert}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:T banner.missing}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Spacing goes on the content: ScrollViewer.Padding lets rows with trimmed text overflow the viewport. -->
+                    <ScrollViewer Grid.Row="2" Margin="0,8,0,0" HorizontalScrollBarVisibility="Disabled"
+                                  IsVisible="{Binding HasSelection}">
+                        <StackPanel Spacing="10" Margin="0,0,14,18">
+                            <Grid ColumnDefinitions="Auto,*" Margin="6,6,0,2">
+                                <TextBlock Text="{loc:T main.destinations}" Classes="section" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{loc:T main.firstwins}" Classes="micro" Margin="10,0,0,0"
+                                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+
+                            <ItemsControl ItemsSource="{Binding Destinations}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Spacing="10"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:DestinationItem">
+                                        <Border Classes="glass tile" Padding="14,12" DoubleTapped="Destination_DoubleTapped">
+                                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                                <Border Classes="chip large" Background="{Binding Look.Soft}" VerticalAlignment="Top">
+                                                    <Path Classes="glyph" Data="{Binding Look.Icon}" Fill="{Binding Look.Accent}" Width="18" Height="18"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" Margin="12,0,8,0" Spacing="7">
+                                                    <StackPanel Spacing="1">
+                                                        <TextBlock Text="{Binding Name}" Classes="h2" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Text="{Binding DisplayPath}" Classes="micro" TextTrimming="CharacterEllipsis"
+                                                                   ToolTip.Tip="{Binding Path}"/>
+                                                    </StackPanel>
+                                                    <ItemsControl ItemsSource="{Binding Chips}" IsVisible="{Binding HasRules}" Margin="0,0,0,-6">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <WrapPanel/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate x:DataType="x:String">
+                                                                <Border Classes="pill">
+                                                                    <TextBlock Text="{Binding}"/>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                    <TextBlock Text="{loc:T dest.norules}" Classes="micro warningText" IsVisible="{Binding !HasRules}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top">
+                                                    <Button Classes="icon small" Click="MoveUp_Click" IsEnabled="{Binding CanMoveUp}" ToolTip.Tip="{loc:T tip.up}">
+                                                        <Path Classes="glyph" Data="{StaticResource IconChevronUp}" Width="15" Height="15"/>
+                                                    </Button>
+                                                    <Button Classes="icon small" Click="MoveDown_Click" IsEnabled="{Binding CanMoveDown}" ToolTip.Tip="{loc:T tip.down}">
+                                                        <Path Classes="glyph" Data="{StaticResource IconChevronDown}" Width="15" Height="15"/>
+                                                    </Button>
+                                                    <Button Classes="icon small" Click="EditDestination_Click" ToolTip.Tip="{loc:T tip.edit}">
+                                                        <Path Classes="glyph" Data="{StaticResource IconPencil}" Width="13" Height="13"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Button Classes="addCard" HorizontalAlignment="Stretch" Height="58" Click="AddDestination_Click">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Path Classes="glyph" Data="{StaticResource IconPlus}" Width="14" Height="14"/>
+                                    <TextBlock Text="{loc:T dest.add}"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- First run: nothing watched yet -->
+                    <StackPanel Grid.RowSpan="3" IsVisible="{Binding !HasFolders}" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                MaxWidth="470" Spacing="16" Margin="0,0,12,40">
+                        <Image Source="/Assets/SmartFoldering.png" Width="92" Height="92" HorizontalAlignment="Center"
+                               RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                        <TextBlock Text="{loc:T welcome.title}" Classes="hero" TextAlignment="Center" TextWrapping="Wrap"/>
+                        <TextBlock Text="{loc:T welcome.body}" Classes="cap" FontSize="13.5" TextAlignment="Center" TextWrapping="Wrap" LineHeight="21"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,6,0,0">
+                            <Button Classes="accent" Click="AddDownloads_Click" Padding="18,11">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Path Classes="glyph white" Data="{StaticResource IconDownload}" Width="15" Height="15"/>
+                                    <TextBlock Text="{loc:T welcome.downloads}"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="glass" Click="AddWithTemplates_Click" Padding="16,11">
+                                <TextBlock Text="{loc:T welcome.other}"/>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
+                            <Path Classes="glyph success" Data="{StaticResource IconCheck}" Width="12" Height="12"/>
+                            <TextBlock Text="{loc:T welcome.note}" Classes="micro"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <!-- ============ Right: window buttons and activity ============ -->
+                <Grid Grid.Column="2" RowDefinitions="Auto,*" Margin="0,14,14,14">
+                    <Grid Background="Transparent" PointerPressed="OnDragAreaPressed" Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="2">
+                            <Button Classes="icon" Classes.on="{Binding IsPaused}" Command="{Binding TogglePauseCommand}" ToolTip.Tip="{Binding PauseTip}">
+                                <Panel>
+                                    <Path Classes="glyph" Data="{StaticResource IconPause}" IsVisible="{Binding !IsPaused}"/>
+                                    <Path Classes="glyph" Data="{StaticResource IconPlay}" IsVisible="{Binding IsPaused}"/>
+                                </Panel>
+                            </Button>
+                            <Button Classes="icon" Click="OpenSettings_Click" ToolTip.Tip="{loc:T tip.settings}">
+                                <Path Classes="glyph" Data="{StaticResource IconGear}" Width="17" Height="17"/>
+                            </Button>
+                            <Border Width="1" Height="18" Background="{DynamicResource DividerBrush}" Margin="6,0"/>
+                            <Button Classes="icon" Click="Minimize_Click" ToolTip.Tip="{loc:T tip.minimize}">
+                                <Path Classes="glyph" Data="{StaticResource IconMinimize}" Width="12" Height="12"/>
+                            </Button>
+                            <Button Classes="icon close" Click="Close_Click" ToolTip.Tip="{loc:T tip.close}">
+                                <Path Classes="glyph" Data="{StaticResource IconClose}" Width="13" Height="13"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="1" Classes="glass tile">
+                        <Grid RowDefinitions="Auto,*">
+                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="16,14,16,8">
+                                <Border Classes="chip accent">
+                                    <Path Classes="glyph accent" Data="{StaticResource IconHistory}" Width="15" Height="15"/>
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="{loc:T activity.title}" Classes="h2" Margin="10,0" VerticalAlignment="Center"/>
+                                <Border Grid.Column="2" Classes="badge" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding ActivityTodayText}"/>
+                                </Border>
+                            </Grid>
+
+                            <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" IsVisible="{Binding HasActivity}">
+                                <ItemsControl ItemsSource="{Binding Activity}" Margin="8,0,8,8">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:ActivityItem">
+                                            <Border Classes="activityRow" Classes.undone="{Binding IsUndone}">
+                                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                                    <Border Classes="chip" Background="{Binding Look.Soft}">
+                                                        <Path Classes="glyph" Data="{Binding Look.Icon}" Fill="{Binding Look.Accent}" Width="14" Height="14"/>
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" Margin="10,0,6,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" FontSize="12.5"
+                                                                   TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
+                                                        <TextBlock Text="{Binding Detail}" Classes="micro" TextTrimming="CharacterEllipsis"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Button Classes="icon small reveal" Click="Reveal_Click" ToolTip.Tip="{loc:T activity.reveal}">
+                                                            <Path Classes="glyph" Data="{StaticResource IconFolderOpen}" Width="13" Height="13"/>
+                                                        </Button>
+                                                        <Button Classes="icon small" Click="Undo_Click" IsVisible="{Binding CanUndo}" ToolTip.Tip="{loc:T activity.undo}">
+                                                            <Path Classes="glyph" Data="{StaticResource IconUndo}" Width="14" Height="14"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <StackPanel Grid.Row="1" IsVisible="{Binding !HasActivity}" VerticalAlignment="Center" Margin="30,0,30,40" Spacing="12">
+                                <Path Classes="glyph" Data="{StaticResource IconHistory}" Width="34" Height="34" Opacity="0.45" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{loc:T activity.empty}" Classes="cap" TextAlignment="Center" TextWrapping="Wrap" LineHeight="19"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-12,-12"
+                            Background="Transparent" Cursor="BottomRightCorner" PointerPressed="OnResizeGripPressed"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

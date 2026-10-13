@@ -1,0 +1,136 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartFoldering.ViewModels"
+        xmlns:loc="using:SmartFoldering.Localization"
+        xmlns:ctl="using:SmartFoldering.Views.Controls"
+        x:Class="SmartFoldering.Views.DestinationWindow"
+        x:DataType="vm:DestinationEditorViewModel"
+        Title="SmartFoldering"
+        Width="580" Height="680"
+        CanResize="False"
+        SystemDecorations="None"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Icon="/Assets/SmartFoldering.ico"
+        KeyDown="OnKeyDown">
+
+    <Border Classes="windowRoot">
+        <Grid>
+            <ctl:AuroraBackground/>
+
+            <Grid RowDefinitions="Auto,*,Auto" Margin="24,20,24,20">
+                <Grid ColumnDefinitions="*,Auto" Background="Transparent" PointerPressed="OnHeaderPointerPressed">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="{Binding Title}" Classes="h1"/>
+                        <TextBlock Text="{Binding Subtitle}" Classes="cap" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Classes="icon" Click="Cancel_Click" VerticalAlignment="Top">
+                        <Path Classes="glyph" Data="{StaticResource IconClose}" Width="13" Height="13"/>
+                    </Button>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" Margin="0,16,-10,0" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="12" Margin="0,0,10,4">
+                        <Border Classes="glass tile flat" Padding="16,14">
+                            <StackPanel Spacing="14">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{loc:T editor.name}" FontWeight="SemiBold"/>
+                                    <TextBox x:Name="NameBox" Text="{Binding Name}"/>
+                                    <TextBlock Text="{Binding ShownNameError}" Classes="micro dangerText"
+                                               IsVisible="{Binding ShownNameError, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{loc:T editor.folder}" FontWeight="SemiBold"/>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <TextBox Text="{Binding Path}" Classes="mono"/>
+                                        <Button Grid.Column="1" Classes="glass" Click="Browse_Click">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <Path Classes="glyph" Data="{StaticResource IconFolderOpen}" Width="14" Height="14"/>
+                                                <TextBlock Text="{loc:T editor.browse}"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="{Binding ShownPathError}" Classes="micro dangerText" TextWrapping="Wrap"
+                                               IsVisible="{Binding ShownPathError, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="{loc:T editor.rules}" Classes="section" Margin="6,4,0,0"/>
+                        <Border Classes="glass tile flat" Padding="12">
+                            <StackPanel Spacing="6">
+                                <ItemsControl ItemsSource="{Binding Rules}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Spacing="8"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:RuleRowViewModel">
+                                            <StackPanel Spacing="4">
+                                                <Grid ColumnDefinitions="166,*,Auto" ColumnSpacing="8">
+                                                    <ComboBox ItemsSource="{Binding KindNames}" SelectedIndex="{Binding KindIndex}"
+                                                              HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                                    <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="{Binding Hint}" Classes="mono"/>
+                                                    <Button Grid.Column="2" Classes="icon small" Command="{Binding RemoveCommand}" VerticalAlignment="Center">
+                                                        <Path Classes="glyph" Data="{StaticResource IconDelete}" Width="14" Height="14"/>
+                                                    </Button>
+                                                </Grid>
+                                                <TextBlock Text="{Binding ShownError}" Classes="micro dangerText" Margin="174,0,0,0"
+                                                           IsVisible="{Binding ShownError, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Button Classes="plain link" Command="{Binding AddRuleCommand}" HorizontalAlignment="Left">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <Path Classes="glyph accent" Data="{StaticResource IconPlus}" Width="12" Height="12"/>
+                                        <TextBlock Text="{loc:T editor.addrule}"/>
+                                    </StackPanel>
+                                </Button>
+                                <TextBlock Text="{Binding ShownRulesError}" Classes="micro dangerText" Margin="8,0,0,0"
+                                           IsVisible="{Binding ShownRulesError, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="{loc:T editor.try}" Classes="section" Margin="6,4,0,0"/>
+                        <Border Classes="glass tile flat" Padding="12">
+                            <StackPanel Spacing="10">
+                                <TextBox Text="{Binding TestName}" Watermark="{loc:T editor.try.hint}" Classes="mono">
+                                    <TextBox.InnerLeftContent>
+                                        <Path Classes="glyph" Data="{StaticResource IconSearch}" Width="14" Height="14" Margin="11,0,0,0"/>
+                                    </TextBox.InnerLeftContent>
+                                </TextBox>
+                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="4,0,0,0" IsVisible="{Binding HasTest}">
+                                    <Panel VerticalAlignment="Center">
+                                        <Path Classes="glyph success" Data="{StaticResource IconCheck}" Width="14" Height="14" IsVisible="{Binding TestMatches}"/>
+                                        <Path Classes="glyph warning" Data="{StaticResource IconAlert}" Width="14" Height="14" IsVisible="{Binding !TestMatches}"/>
+                                    </Panel>
+                                    <TextBlock Text="{Binding TestResult}" Classes="cap" Classes.successText="{Binding TestMatches}"
+                                               Classes.warningText="{Binding !TestMatches}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8" Margin="0,16,0,0">
+                    <Button Classes="glass danger" Click="Delete_Click" IsVisible="{Binding !IsNew}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Path Classes="glyph danger" Data="{StaticResource IconDelete}" Width="14" Height="14"/>
+                            <TextBlock Text="{Binding DeleteLabel}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="2" Classes="glass" Click="Cancel_Click" Padding="18,9">
+                        <TextBlock Text="{loc:T editor.cancel}"/>
+                    </Button>
+                    <Button Grid.Column="3" Classes="accent" Click="Save_Click" Padding="28,9" IsDefault="True">
+                        <TextBlock Text="{loc:T editor.save}"/>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

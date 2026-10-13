@@ -1,0 +1,23 @@
+# Build output
+bin/
+obj/
+out/
+dist/
+publish/
+artifacts/
+TestResults/
+
+# IDEs
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Screenshot renders (the README images live in docs/images). Rooted: tools/Screenshots is source code.
+/screenshots/
+/shots/
+
+# OS
+Thumbs.db
+.DS_Store

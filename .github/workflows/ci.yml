@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  AVALONIA_TELEMETRY_OPTOUT: 1
+
+jobs:
+  test:
+    name: Build, test and UI self-test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build SmartFoldering.sln -c Release
+
+      - name: Engine tests (real files and a real FileSystemWatcher)
+        run: dotnet test tests/SmartFoldering.Tests -c Release --no-build
+
+      - name: UI self-test (headless rendering, view models driven against real folders)
+        run: dotnet run -c Release --no-build --project tools/Screenshots -- artifacts --selftest
+
+      - name: Upload rendered windows
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-windows
+          path: artifacts/*.png
+          if-no-files-found: ignore
+
+      - name: Publish
+        run: >
+          dotnet publish src/SmartFoldering/SmartFoldering.csproj -c Release -r win-x64 --self-contained false
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SmartFoldering-win-x64
+          path: publish/SmartFoldering.exe

@@ -1,0 +1,92 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SmartFoldering.ViewModels"
+        xmlns:loc="using:SmartFoldering.Localization"
+        xmlns:ctl="using:SmartFoldering.Views.Controls"
+        x:Class="SmartFoldering.Views.PreviewWindow"
+        x:DataType="vm:PreviewViewModel"
+        Title="SmartFoldering"
+        Width="560" Height="660"
+        CanResize="False"
+        SystemDecorations="None"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Icon="/Assets/SmartFoldering.ico"
+        KeyDown="OnKeyDown">
+
+    <Border Classes="windowRoot">
+        <Grid>
+            <ctl:AuroraBackground/>
+
+            <Grid RowDefinitions="Auto,*,Auto" Margin="24,20,24,20">
+                <Grid ColumnDefinitions="Auto,*,Auto" Background="Transparent" PointerPressed="OnHeaderPointerPressed">
+                    <Border Classes="chip large accent" VerticalAlignment="Top">
+                        <Path Classes="glyph accent" Data="{StaticResource IconEye}" Width="18" Height="18"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" Spacing="2" Margin="12,0,8,0">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="{loc:T preview.title}" Classes="h1"/>
+                            <Border Classes="badge" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CountText}"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Subtitle}" Classes="cap" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Button Grid.Column="2" Classes="icon" Click="Close_Click" VerticalAlignment="Top">
+                        <Path Classes="glyph" Data="{StaticResource IconClose}" Width="13" Height="13"/>
+                    </Button>
+                </Grid>
+
+                <Border Grid.Row="1" Classes="glass tile flat" Margin="0,16,0,0" Padding="6">
+                    <Panel>
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" IsVisible="{Binding !IsEmpty}">
+                            <StackPanel>
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:PreviewItem">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,6">
+                                                <Border Classes="chip" Background="{Binding Look.Soft}">
+                                                    <Path Classes="glyph" Data="{Binding Look.Icon}" Fill="{Binding Look.Accent}" Width="14" Height="14"/>
+                                                </Border>
+                                                <TextBlock Grid.Column="1" Text="{Binding FileName}" Margin="10,0" VerticalAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
+                                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                    <Path Classes="glyph" Data="{StaticResource IconArrowRight}" Width="12" Height="12" Opacity="0.6"/>
+                                                    <Border Classes="pill" Margin="0" Background="{Binding Look.Soft}">
+                                                        <TextBlock Text="{Binding Destination}" FontWeight="SemiBold"/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="{Binding MoreText}" Classes="micro" Margin="14,8" IsVisible="{Binding HasMore}"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                        <StackPanel IsVisible="{Binding IsEmpty}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="12" Margin="30">
+                            <Border Classes="chip large success" HorizontalAlignment="Center">
+                                <Path Classes="glyph success" Data="{StaticResource IconCheck}" Width="18" Height="18"/>
+                            </Border>
+                            <TextBlock Text="{loc:T preview.empty}" Classes="cap" TextAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Panel>
+                </Border>
+
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Margin="0,14,0,0">
+                    <TextBlock Text="{loc:T preview.note}" Classes="micro" TextWrapping="Wrap" VerticalAlignment="Center" Margin="4,0,12,0"/>
+                    <Button Grid.Column="1" Classes="glass" Click="Close_Click" Padding="18,9">
+                        <TextBlock Text="{loc:T preview.close}"/>
+                    </Button>
+                    <Button Grid.Column="2" Classes="accent" Click="Start_Click" IsEnabled="{Binding CanAct}" Padding="20,9">
+                        <StackPanel Orientation="Horizontal" Spacing="7">
+                            <Path Classes="glyph white" Data="{StaticResource IconPlay}" Width="12" Height="12"/>
+                            <TextBlock Text="{Binding ActionText}"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

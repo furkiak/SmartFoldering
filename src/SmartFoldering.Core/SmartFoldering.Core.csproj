@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Everything that sorts files: rules, safe moves, the watcher engine, history and settings. No UI, fully testable. -->
+  <PropertyGroup>
+    <RootNamespace>SmartFoldering.Core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="SmartFoldering.Tests" />
+  </ItemGroup>
+</Project>

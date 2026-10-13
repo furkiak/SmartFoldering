@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SmartFoldering.Views.Controls.AuroraBackground"
+             IsHitTestVisible="False">
+    <!-- Soft colour blobs that the glass cards appear to refract. Static gradients (no blur effects) keep repaints cheap. -->
+    <Grid ClipToBounds="True">
+        <Ellipse Width="520" Height="520" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-220,-240,0,0">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="{DynamicResource AuroraBlue}" Offset="0"/>
+                    <GradientStop Color="{DynamicResource AuroraBlueClear}" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Width="480" Height="480" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-180">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="{DynamicResource AuroraViolet}" Offset="0"/>
+                    <GradientStop Color="{DynamicResource AuroraVioletClear}" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Width="380" Height="380" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-170,0,0,-80">
+            <Ellipse.Fill>
+                <RadialGradientBrush>
+                    <GradientStop Color="{DynamicResource AuroraGreen}" Offset="0"/>
+                    <GradientStop Color="{DynamicResource AuroraGreenClear}" Offset="1"/>
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+    </Grid>
+</UserControl>
